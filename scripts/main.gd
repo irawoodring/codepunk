@@ -10,6 +10,7 @@ const DialogScript := preload("res://scripts/ui/dialog_box.gd")
 const PanelScript := preload("res://scripts/ui/challenge_panel.gd")
 const SatchelScript := preload("res://scripts/ui/satchel.gd")
 const MenuScript := preload("res://scripts/ui/menu.gd")
+const TouchScript := preload("res://scripts/ui/touch_controls.gd")
 
 const MAP_PATH := "res://world/map.json"
 
@@ -18,6 +19,7 @@ var player
 var hud
 var dialog
 var panel
+var touch
 var satchel
 var menu
 var _district := ""
@@ -83,6 +85,9 @@ func _build_ui() -> void:
 
 	hud = HudScript.new()
 	root.add_child(hud)
+	touch = TouchScript.new()
+	touch.visible = false
+	root.add_child(touch)
 	dialog = DialogScript.new()
 	root.add_child(dialog)
 	panel = PanelScript.new()
@@ -94,6 +99,15 @@ func _build_ui() -> void:
 	menu = MenuScript.new()
 	root.add_child(menu)
 	menu.start_requested.connect(_on_start_requested)
+	Platform.layout_changed.connect(_apply_layout)
+	_apply_layout()
+
+
+func _apply_layout() -> void:
+	for ui in [hud, dialog, panel, satchel, menu]:
+		ui.apply_layout()
+	if player != null:
+		hud.set_prompt(player.focus)
 
 
 func _spawn_object(c: String, tile: Vector2i) -> Interactable:
@@ -112,7 +126,7 @@ func _on_start_requested(new_game: bool) -> void:
 	if new_game:
 		# Rebuild the world from a clean save.
 		GameState.skip_title = true
-		get_tree().reload_current_scene()
+		get_tree().reload_current_scene.call_deferred()  # after this input event finishes
 		return
 	_begin()
 
@@ -128,6 +142,9 @@ func _begin() -> void:
 func _process(_delta: float) -> void:
 	if world == null or player == null:
 		return
+	# Touch controls show on phones whenever the world is in view.
+	touch.visible = Platform.is_mobile and _playing \
+		and not (panel.visible or satchel.visible or menu.visible)
 	var d: Dictionary = world.district_at(player.position)
 	var label := "%s  (%s)" % [d.get("name", ""), d.get("tier", "")]
 	if label != _district:

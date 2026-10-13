@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameState="*res://scripts/game_state.gd"
+Platform="*res://scripts/platform.gd"
 Challenges="*res://scripts/challenge_library.gd"
 PythonRunner="*res://scripts/python_runner.gd"
 
