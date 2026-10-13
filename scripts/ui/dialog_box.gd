@@ -10,6 +10,8 @@ var _lines: Array = []
 var _index := 0
 var _on_done: Callable
 var _tween: Tween
+var _more: Label
+var _last_advance := 0
 
 
 func _ready() -> void:
@@ -33,6 +35,7 @@ func _ready() -> void:
 	Steam.set_rich_text_size(_text, 20)
 	col.add_child(_text)
 	var more := Label.new()
+	_more = more
 	more.text = "E / Space to continue"
 	more.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	more.add_theme_font_size_override("font_size", 13)
@@ -55,12 +58,21 @@ func show_dialog(speaker: String, lines: Array, on_done: Callable = Callable()) 
 
 
 func _show_line() -> void:
-	_text.text = Markdown._escape(str(_lines[_index]))
+	_text.text = Markdown._escape(Platform.controls_text(str(_lines[_index])))
 	_text.visible_ratio = 0.0
 	if _tween:
 		_tween.kill()
 	_tween = create_tween()
 	_tween.tween_property(_text, "visible_ratio", 1.0, clampf(_text.text.length() * 0.018, 0.2, 2.0))
+
+
+func apply_layout() -> void:
+	var side := 10 if Platform.compact else 120
+	offset_left = side
+	offset_right = -side
+	offset_top = -230 if Platform.compact else -210
+	offset_bottom = -10 if Platform.compact else -24
+	_more.text = "Tap to continue" if Platform.is_mobile else "E / Space to continue"
 
 
 func _advance() -> void:
@@ -87,6 +99,11 @@ func _input(event: InputEvent) -> void:
 		or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT)
 	if advance:
 		get_viewport().set_input_as_handled()
+		# A tap on the USE button also arrives as a mouse click; count it once.
+		var now := Time.get_ticks_msec()
+		if now - _last_advance < 150:
+			return
+		_last_advance = now
 		_advance()
 	elif event.is_action_pressed("menu"):
 		get_viewport().set_input_as_handled()

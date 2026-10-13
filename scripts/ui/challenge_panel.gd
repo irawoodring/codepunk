@@ -1,6 +1,8 @@
 extends Control
 ## The puzzle-lock screen: problem description and hints on the left, a
-## Python code editor and test results on the right.
+## Python code editor and test results on the right. On small screens the
+## three parts become tabs (Problem / Code / Results), and on phones the code
+## is edited in a full-screen HTML editor that works with phone keyboards.
 
 signal closed(challenge_id: String, just_solved: bool)
 
@@ -25,6 +27,18 @@ var _output: RichTextLabel
 var _reward_panel: PanelContainer
 var _reward_text: RichTextLabel
 var _save_timer: Timer
+var _frame: PanelContainer
+var _close_button: Button
+var _tabs: HBoxContainer
+var _tab_buttons: Array[Button] = []
+var _tab := 1
+var _left: VBoxContainer
+var _right: VBoxContainer
+var _readme_scroll: ScrollContainer
+var _out_box: PanelContainer
+var _out_scroll: ScrollContainer
+var _edit_button: Button
+var _tap_hint: Label
 
 
 func _ready() -> void:
@@ -36,18 +50,14 @@ func _ready() -> void:
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(shade)
 
-	var frame := PanelContainer.new()
-	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	frame.offset_left = 28
-	frame.offset_top = 22
-	frame.offset_right = -28
-	frame.offset_bottom = -22
-	frame.add_theme_stylebox_override("panel", Steam.box(Steam.WOOD, Steam.BRASS, 4, 10, 16))
-	add_child(frame)
+	_frame = PanelContainer.new()
+	_frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_frame.add_theme_stylebox_override("panel", Steam.box(Steam.WOOD, Steam.BRASS, 4, 10, 16))
+	add_child(_frame)
 
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 10)
-	frame.add_child(col)
+	_frame.add_child(col)
 
 	# Header
 	var header := HBoxContainer.new()
@@ -64,10 +74,25 @@ func _ready() -> void:
 	_subtitle.add_theme_font_size_override("font_size", 15)
 	_subtitle.add_theme_color_override("font_color", Steam.PARCHMENT_DIM)
 	titles.add_child(_subtitle)
-	var close := Button.new()
-	close.text = "Close  (Esc)"
-	close.pressed.connect(close_panel)
-	header.add_child(close)
+	_close_button = Button.new()
+	_close_button.text = "Close  (Esc)"
+	_close_button.pressed.connect(close_panel)
+	header.add_child(_close_button)
+
+	# Tabs, used on small screens only.
+	_tabs = HBoxContainer.new()
+	_tabs.add_theme_constant_override("separation", 6)
+	col.add_child(_tabs)
+	var group := ButtonGroup.new()
+	for i in 3:
+		var tab := Button.new()
+		tab.text = ["Problem", "Code", "Results"][i]
+		tab.toggle_mode = true
+		tab.button_group = group
+		tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tab.pressed.connect(_show_tab.bind(i))
+		_tabs.add_child(tab)
+		_tab_buttons.append(tab)
 
 	var split := HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -75,7 +100,8 @@ func _ready() -> void:
 	col.add_child(split)
 
 	# Left: problem + hints
-	var left := VBoxContainer.new()
+	_left = VBoxContainer.new()
+	var left := _left
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left.size_flags_stretch_ratio = 0.9
 	left.add_theme_constant_override("separation", 8)
@@ -84,11 +110,9 @@ func _ready() -> void:
 	readme_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	readme_box.add_theme_stylebox_override("panel", Steam.box(Steam.WOOD_MID, Steam.BRASS_DARK, 2, 6, 14))
 	left.add_child(readme_box)
-	_readme = RichTextLabel.new()
-	_readme.bbcode_enabled = true
-	_readme.selection_enabled = true
+	_readme = _scrolling_text(readme_box)
+	_readme_scroll = _readme.get_parent() as ScrollContainer
 	Steam.set_rich_text_size(_readme, 17, 15)
-	readme_box.add_child(_readme)
 
 	var hint_row := HBoxContainer.new()
 	left.add_child(hint_row)
@@ -103,7 +127,8 @@ func _ready() -> void:
 	left.add_child(_hints)
 
 	# Right: editor + results
-	var right := VBoxContainer.new()
+	_right = VBoxContainer.new()
+	var right := _right
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 8)
 	split.add_child(right)
@@ -119,7 +144,13 @@ func _ready() -> void:
 	_editor.draw_tabs = false
 	_editor.minimap_draw = false
 	_editor.text_changed.connect(_on_code_changed)
+	_editor.gui_input.connect(_on_editor_input)
 	right.add_child(_editor)
+	_tap_hint = Label.new()
+	_tap_hint.text = "Tap the code to edit it."
+	_tap_hint.add_theme_font_size_override("font_size", 14)
+	_tap_hint.add_theme_color_override("font_color", Steam.PARCHMENT_DIM)
+	right.add_child(_tap_hint)
 
 	var buttons := HBoxContainer.new()
 	buttons.add_theme_constant_override("separation", 10)
@@ -129,6 +160,10 @@ func _ready() -> void:
 	_run_button.add_theme_color_override("font_color", Steam.BRASS_LIGHT)
 	_run_button.pressed.connect(run_tests)
 	buttons.add_child(_run_button)
+	_edit_button = Button.new()
+	_edit_button.text = "Edit Code"
+	_edit_button.pressed.connect(_open_html_editor)
+	buttons.add_child(_edit_button)
 	var reset := Button.new()
 	reset.text = "Reset Code"
 	reset.tooltip_text = "Throw away your code and start again from the starter code."
@@ -140,16 +175,13 @@ func _ready() -> void:
 	_status.add_theme_color_override("font_color", Steam.PARCHMENT_DIM)
 	buttons.add_child(_status)
 
-	var out_box := PanelContainer.new()
-	out_box.custom_minimum_size = Vector2(0, 200)
-	out_box.add_theme_stylebox_override("panel", Steam.box(Steam.CODE_BG, Steam.BRASS_DARK, 2, 4, 10))
-	right.add_child(out_box)
-	_output = RichTextLabel.new()
-	_output.bbcode_enabled = true
-	_output.selection_enabled = true
-	_output.scroll_following = false
+	_out_box = PanelContainer.new()
+	_out_box.custom_minimum_size = Vector2(0, 200)
+	_out_box.add_theme_stylebox_override("panel", Steam.box(Steam.CODE_BG, Steam.BRASS_DARK, 2, 4, 10))
+	right.add_child(_out_box)
+	_output = _scrolling_text(_out_box)
+	_out_scroll = _output.get_parent() as ScrollContainer
 	Steam.set_rich_text_size(_output, 15, 14)
-	out_box.add_child(_output)
 
 	# Reward banner (shown over the output when the lock opens)
 	_reward_panel = PanelContainer.new()
@@ -175,7 +207,88 @@ func _ready() -> void:
 	add_child(_save_timer)
 
 	PythonRunner.finished.connect(_on_tests_finished)
+	apply_layout()
 
+
+## Rich text inside a ScrollContainer, which scrolls with a mouse wheel and
+## also by dragging with a finger on touch screens.
+func _scrolling_text(parent: Control) -> RichTextLabel:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	parent.add_child(scroll)
+	var label := RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.fit_content = true
+	label.scroll_active = false
+	label.selection_enabled = not Platform.is_mobile  # selecting would block drag-scrolling
+	label.mouse_filter = Control.MOUSE_FILTER_PASS
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(label)
+	return label
+
+
+## Switch between side-by-side (wide screens) and tabs (small screens).
+func apply_layout() -> void:
+	var compact := Platform.compact
+	var margin := 6 if compact else 24
+	_frame.offset_left = margin
+	_frame.offset_top = margin
+	_frame.offset_right = -margin
+	_frame.offset_bottom = -margin
+	_tabs.visible = compact
+	_out_box.custom_minimum_size.y = 60 if compact else 200
+	var html := Platform.uses_html_editor()
+	_editor.editable = not html
+	# On phones the code is only shown here; it must never take keyboard focus,
+	# or the browser keeps focus on the game instead of the HTML editor.
+	_editor.focus_mode = Control.FOCUS_NONE if html else Control.FOCUS_ALL
+	_editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY if compact else TextEdit.LINE_WRAPPING_NONE
+	_edit_button.visible = html
+	_tap_hint.visible = html
+	_close_button.text = "Close" if Platform.is_mobile else "Close  (Esc)"
+	_run_button.text = "Run Tests" if Platform.is_mobile else "Run Tests  (Ctrl+Enter)"
+	_title.add_theme_font_size_override("font_size", 22 if compact else 28)
+	_show_tab(_tab)
+
+
+func _show_tab(i: int) -> void:
+	_tab = i
+	_tab_buttons[i].button_pressed = true
+	if not Platform.compact:
+		_left.visible = true
+		_right.visible = true
+		_editor.visible = true
+		_out_box.visible = true
+		_out_box.size_flags_vertical = Control.SIZE_FILL
+		return
+	_left.visible = i == 0
+	_right.visible = i != 0
+	_editor.visible = i == 1
+	_tap_hint.visible = i == 1 and Platform.uses_html_editor()
+	_out_box.visible = i == 2
+	_out_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+
+func _on_editor_input(event: InputEvent) -> void:
+	if not Platform.uses_html_editor():
+		return
+	if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+			or (event is InputEventScreenTouch and event.pressed):
+		_open_html_editor()
+
+
+func _open_html_editor() -> void:
+	get_viewport().gui_release_focus()
+	Platform.open_code_editor(str(challenge.get("title", "Code")), _editor.text, _on_html_editor_closed)
+
+
+func _on_html_editor_closed(code: String, action: String) -> void:
+	if action == "cancel" or not visible:
+		return
+	_editor.text = code
+	_on_code_changed()
+	if action == "run":
+		run_tests()
 
 func open_challenge(c: Dictionary) -> void:
 	challenge = c
@@ -186,7 +299,7 @@ func open_challenge(c: Dictionary) -> void:
 	_subtitle.text = "%s  -  %s%s" % [tier, c.get("topic", ""),
 		"    (solved: practise as much as you like)" if GameState.is_solved(_id) else ""]
 	_readme.text = Markdown.to_bbcode(str(c.get("readme", "")))
-	_readme.scroll_to_line(0)
+	_readme_scroll.scroll_vertical = 0
 	var code = GameState.drafts.get(_id, null)
 	_editor.text = str(code) if code != null else str(c.get("starter", ""))
 	_editor.clear_undo_history()
@@ -200,7 +313,9 @@ func open_challenge(c: Dictionary) -> void:
 	if not visible:
 		GameState.push_modal()
 	visible = true
-	_editor.grab_focus()
+	_show_tab(0 if Platform.compact else 1)
+	if not Platform.uses_html_editor():
+		_editor.grab_focus()
 
 
 func close_panel() -> void:
@@ -221,6 +336,8 @@ func run_tests() -> void:
 	_clear_error_line()
 	_run_button.disabled = true
 	_status.text = "Running tests..."
+	if Platform.compact:
+		_show_tab(2)
 	if PythonRunner.status() == "loading":
 		_output.text = "[color=#b8a888]Warming up the boilers: loading Python in your browser. " \
 			+ "This only takes a few seconds, the first time.[/color]"
@@ -338,7 +455,7 @@ func _show_test_results(result: Dictionary) -> void:
 			_mark_error_line(int(t.get("line", 0)))
 		first_fail = false
 	_output.text = "\n".join(lines)
-	_output.scroll_to_line(0)
+	_out_scroll.scroll_vertical = 0
 	if all_pass:
 		_on_all_passed()
 

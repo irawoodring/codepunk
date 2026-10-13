@@ -28,9 +28,23 @@ Once this is merged to `main` and GitHub Pages is turned on (**Settings → Page
 
 **https://irawoodring.github.io/codepunk/**
 
-Students just open that link in a desktop browser (Chrome, Edge, Firefox or Safari). The first time they open a puzzle-lock, Python (about 10 MB) loads in the background. After that the browser caches it. Progress and code drafts save in the browser automatically.
+Students just open that link in a browser (Chrome, Edge, Firefox or Safari) on a computer, tablet or phone. The first time they open a puzzle-lock, Python (about 10 MB) loads in the background. After that the browser caches it. Progress and code drafts save in the browser automatically.
 
 The game is plain static files (`build/web/`), so you can host it on any web server, an LMS, or itch.io. It doesn't need any special server headers.
+
+### On phones and tablets
+
+The game switches to touch controls automatically on phones and tablets (any device whose main input is touch):
+
+* **Move:** touch anywhere on the left half of the screen and slide your thumb. A joystick appears under it.
+* **USE / BAG / MENU** buttons on the right replace E, Tab and Esc.
+* Text is scaled to the screen's real size, and the game works in landscape or portrait (landscape is roomier).
+* Puzzle-locks switch to **Problem / Code / Results** tabs. Tap the code (or **Edit Code**) to open a full-screen code editor built for phone keyboards. It has line numbers, auto-indent after `:`, autocorrect off, and a row of keys that are awkward on phone keyboards (Tab, Untab, `:`, `()`, `[]`, `{}`, quotes, `=`…). **Run Tests** runs the code straight from there.
+
+To try the mobile version on a computer, add `?mobile=1` to the game's URL.
+
+![Touch controls](docs/screenshots/mobile-world.png)
+![The phone code editor](docs/screenshots/mobile-editor.png)
 
 ### Schools that block CDNs
 
@@ -137,12 +151,14 @@ scripts/
   challenge_library.gd    loads challenges (autoload)
   python_runner.gd        runs tests via Pyodide (web) or local Python (editor) (autoload)
   steam.gd, markdown.gd   palette/theme/drawing helpers, Markdown -> BBCode
-  ui/                     HUD, dialog box, challenge panel, satchel, menus
+  platform.gd             detects phones, scales the UI, opens the phone code editor (autoload)
+  ui/                     HUD, dialog box, challenge panel, satchel, menus, touch controls
 python/harness.py         test runner (Pyodide or CPython; no pytest needed)
 challenges/               the 15 puzzle-locks
 world/map.json            the city
 tools/                    challenge checker and importer
 web/codepunk_python.js    Pyodide bridge (runs Python in a Web Worker)
+web/codepunk_mobile.js    phone detection and the full-screen phone code editor
 fonts/                    Libre Baskerville and JetBrains Mono (SIL Open Font License)
 tests/                    end-to-end tests of the real game
 .github/workflows/        builds the web version and publishes it to GitHub Pages
@@ -169,4 +185,3 @@ godot --path . res://tests/smoke_test.tscn -- --shots=/tmp/shots
 * More districts (e.g. an **Airship Docks** for file I/O and exceptions, or an **Observatory** for dictionaries of dictionaries and complexity).
 * Per-test "partial credit" visuals, like gears on the lock that turn as more tests pass.
 * A teacher export of student progress (the browser save already has everything).
-* Mobile/tablet support (an on-screen joystick and keyboard).

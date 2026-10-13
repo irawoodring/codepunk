@@ -15,6 +15,7 @@ var _reset: Button
 var _python_status: Label
 var _confirm_reset := false
 var _bg: ColorRect
+var _frame: PanelContainer
 
 
 func _ready() -> void:
@@ -28,6 +29,7 @@ func _ready() -> void:
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	var frame := PanelContainer.new()
+	_frame = frame
 	frame.custom_minimum_size = Vector2(620, 0)
 	frame.add_theme_stylebox_override("panel", Steam.box(Steam.WOOD, Steam.BRASS, 4, 10, 28))
 	center.add_child(frame)
@@ -62,6 +64,14 @@ func _ready() -> void:
 	_python_status.add_theme_font_size_override("font_size", 15)
 	col.add_child(_python_status)
 	PythonRunner.status_changed.connect(_update_python_status)
+
+
+func apply_layout() -> void:
+	var view := get_viewport_rect().size
+	_frame.custom_minimum_size.x = minf(620.0, view.x - 20.0)
+	_frame.add_theme_stylebox_override("panel",
+		Steam.box(Steam.WOOD, Steam.BRASS, 4, 10, 14 if Platform.compact else 28))
+	_heading.add_theme_font_size_override("font_size", 38 if Platform.compact else 52)
 
 
 func _button(parent: Control, text: String, action: Callable) -> Button:
@@ -130,7 +140,7 @@ func _on_reset() -> void:
 		_reset.text = "Click again to erase everything"
 		return
 	GameState.reset_progress()
-	get_tree().reload_current_scene()
+	get_tree().reload_current_scene.call_deferred()  # after this input event finishes
 
 
 func _update_python_status() -> void:

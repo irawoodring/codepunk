@@ -5,6 +5,8 @@ var _list: VBoxContainer
 var _progress: Label
 var _districts: Array = []
 var _legend: Dictionary = {}
+var _frame: PanelContainer
+var _close: Button
 
 
 class Swatch:
@@ -27,6 +29,7 @@ func _ready() -> void:
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	var frame := PanelContainer.new()
+	_frame = frame
 	frame.custom_minimum_size = Vector2(760, 540)
 	center.add_child(frame)
 	var col := VBoxContainer.new()
@@ -53,9 +56,17 @@ func _ready() -> void:
 
 	var close := Button.new()
 	close.text = "Close  (Tab)"
+	_close = close
 	close.size_flags_horizontal = Control.SIZE_SHRINK_END
 	close.pressed.connect(toggle)
 	col.add_child(close)
+
+
+func apply_layout() -> void:
+	var view := get_viewport_rect().size
+	_frame.custom_minimum_size = Vector2(view.x - 16, view.y - 16) if Platform.compact else Vector2(760, 540)
+	_progress.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if Platform.compact else TextServer.AUTOWRAP_OFF
+	_close.text = "Close" if Platform.is_mobile else "Close  (Tab)"
 
 
 func configure(districts: Array, legend: Dictionary) -> void:
@@ -92,7 +103,7 @@ func _refresh() -> void:
 		var tier := str(d.get("tier", ""))
 		parts.append("%s (%s): %d / %d locks" % [d.get("name", ""), tier, int(solved.get(tier, 0)), int(totals.get(tier, 0))])
 	parts.append("Brass Cogs: %d" % GameState.cogs)
-	_progress.text = "     ".join(parts)
+	_progress.text = ("\n" if Platform.compact else "     ").join(parts)
 
 	if GameState.inventory.is_empty():
 		var empty := Label.new()

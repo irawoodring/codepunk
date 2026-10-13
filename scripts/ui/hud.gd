@@ -6,6 +6,7 @@ var _district_label: Label
 var _prompt_panel: PanelContainer
 var _prompt_label: Label
 var _toast_box: VBoxContainer
+var _keys: Label
 
 
 class GearIcon:
@@ -47,6 +48,7 @@ func _ready() -> void:
 	col.add_child(_district_label)
 
 	var keys := Label.new()
+	_keys = keys
 	keys.text = "WASD / Arrows: move    E: interact    Tab: satchel    Esc: menu"
 	keys.add_theme_font_size_override("font_size", 14)
 	keys.add_theme_color_override("font_color", Color(0.94, 0.88, 0.75, 0.75))
@@ -78,6 +80,10 @@ func _ready() -> void:
 	refresh()
 
 
+func apply_layout() -> void:
+	_keys.visible = not Platform.is_mobile and not Platform.compact
+
+
 func refresh() -> void:
 	_cogs_label.text = "Brass Cogs: %d" % GameState.cogs
 
@@ -90,12 +96,15 @@ func set_prompt(target) -> void:
 	if target == null:
 		_prompt_panel.visible = false
 		return
-	_prompt_label.text = "[E]  " + target.prompt_text()
+	_prompt_label.text = ("USE:  " if Platform.is_mobile else "[E]  ") + target.prompt_text()
+	_prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if Platform.compact else TextServer.AUTOWRAP_OFF
+	_prompt_panel.custom_minimum_size.x = minf(size.x - 40, 520) if Platform.compact else 0.0
 	_prompt_panel.visible = true
 	# Re-centre now that the text width changed.
 	_prompt_panel.reset_size()
 	_prompt_panel.position.x = (size.x - _prompt_panel.size.x) / 2.0
-	_prompt_panel.position.y = size.y - _prompt_panel.size.y - 28
+	# On phones, sit above the touch controls.
+	_prompt_panel.position.y = size.y - _prompt_panel.size.y - (180 if Platform.is_mobile else 28)
 
 
 func toast(text: String) -> void:
@@ -104,8 +113,11 @@ func toast(text: String) -> void:
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	panel.add_theme_stylebox_override("panel", Steam.box(Steam.WOOD, Steam.BRASS_LIGHT, 2, 6, 10))
 	var label := Label.new()
-	label.text = text
+	label.text = Platform.controls_text(text)
 	label.add_theme_font_size_override("font_size", 20)
+	if Platform.compact:
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.custom_minimum_size.x = minf(size.x - 48, 560)
 	label.add_theme_color_override("font_color", Steam.BRASS_LIGHT)
 	panel.add_child(label)
 	_toast_box.add_child(panel)
