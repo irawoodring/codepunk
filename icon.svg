@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="20" fill="#2b1d14"/>
+  <g transform="translate(64 64)" fill="#c8a050">
+    <circle r="34"/>
+    <g id="t"><rect x="-7" y="-48" width="14" height="18" rx="2"/></g>
+    <use href="#t" transform="rotate(45)"/><use href="#t" transform="rotate(90)"/>
+    <use href="#t" transform="rotate(135)"/><use href="#t" transform="rotate(180)"/>
+    <use href="#t" transform="rotate(225)"/><use href="#t" transform="rotate(270)"/>
+    <use href="#t" transform="rotate(315)"/>
+    <circle r="22" fill="#2b1d14"/>
+    <text x="0" y="9" font-family="monospace" font-size="26" font-weight="bold" text-anchor="middle" fill="#7ae0f0">py</text>
+  </g>
+</svg>

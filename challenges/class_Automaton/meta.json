@@ -1,0 +1,12 @@
+{
+  "title": "Automaton Workshop",
+  "tier": "CS2",
+  "topic": "Inheritance & polymorphism",
+  "cogs": 1,
+  "reward": {"item": "Welding Goggles", "description": "Smoked-glass lenses in a brass frame. Everything looks sepia through them, which is how you know they're working.", "color": "#4a7a6a"},
+  "hints": [
+    "Give Automaton a class attribute STEAM_PER_HOUR = 10, and use self.STEAM_PER_HOUR in work(). Subclasses can just change that number!",
+    "In a subclass's __init__, call super().__init__(name, steam) before adding new attributes.",
+    "describe() is defined once in Automaton. Use type(self).__name__ to get 'WelderBot' or 'CourierBot' automatically."
+  ]
+}

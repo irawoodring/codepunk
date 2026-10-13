@@ -1,0 +1,12 @@
+{
+  "title": "The Rail Yard",
+  "tier": "CS2",
+  "topic": "Linked lists",
+  "cogs": 1,
+  "reward": {"item": "Conductor's Whistle", "description": "One blast and every train in the yard stops to listen.", "color": "#d8c070"},
+  "hints": [
+    "Keep self.head pointing at the front Car. An empty train has head = None.",
+    "To reach the last car, start at head and follow .next until a car's .next is None.",
+    "For detach, keep track of the previous car as you walk, so you can set previous.next = current.next. Removing the head is a special case!"
+  ]
+}

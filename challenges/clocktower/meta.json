@@ -1,0 +1,12 @@
+{
+  "title": "The Clocktower",
+  "tier": "CS1",
+  "topic": "range() & loops",
+  "cogs": 1,
+  "reward": {"item": "Pocket Watch", "description": "A silver pocket watch that runs exactly four minutes fast, as all good watches should.", "color": "#c0c4c8"},
+  "hints": [
+    "Hours 13-23 chime hour - 12 times. Hours 0 and 12 both chime 12 times.",
+    "For chime_pattern, make a list of 'BONG' words and join them, or use string multiplication carefully.",
+    "total_chimes can call chimes() inside a loop: for hour in range(start, end + 1): ..."
+  ]
+}

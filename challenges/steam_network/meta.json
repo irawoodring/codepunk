@@ -1,0 +1,13 @@
+{
+  "title": "The Grand Engine",
+  "tier": "CS2",
+  "topic": "Graphs & breadth-first search",
+  "cogs": 3,
+  "final": true,
+  "reward": {"item": "Aether Core", "description": "The beating heart of the Grand Engine: a sphere of blue-white light in a cage of brass. The whole city hums in tune with it.", "color": "#7ae0f0"},
+  "hints": [
+    "reachable: keep a set of visited chambers and a list to explore. Pop a chamber, add every neighbour you haven't visited yet.",
+    "shortest_route: breadth-first search finds the fewest pipes. Use collections.deque as a queue, and remember each chamber's 'came_from' parent so you can rebuild the path at the end.",
+    "isolated: every chamber in the network that isn't in reachable(network, boiler). Remember to sort the result."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Pipe Balancer",
+  "tier": "CS2",
+  "topic": "Stacks",
+  "cogs": 1,
+  "reward": {"item": "Copper Coupling", "description": "A threaded coupling joint. It fits every pipe in the Foundry, and a few that aren't in the Foundry.", "color": "#c47a3a"},
+  "hints": [
+    "Use a list as a stack: .append() pushes, .pop() removes the most recent item.",
+    "Make a dictionary of matching pairs: CLOSERS = {')': '(', ']': '[', '}': '{', '>': '<'}.",
+    "A closer is a leak if the stack is empty OR the top of the stack isn't its partner. If the loop ends with openers still on the stack, the first leak is at the index of the bottom-most unmatched opener, so push indexes too!"
+  ]
+}

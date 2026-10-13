@@ -1,0 +1,12 @@
+{
+  "title": "Telegraph Office",
+  "tier": "CS1",
+  "topic": "Strings, split/join & dictionaries",
+  "cogs": 1,
+  "reward": {"item": "Telegraph Key", "description": "A clicking brass key on a walnut base. Tap it and somewhere, far away, a bell rings.", "color": "#b87333"},
+  "hints": [
+    "Loop over the letters of the text. Look each letter up with MORSE[letter].",
+    "Words are separated by ' / '. Try signal.split(' / ') to get the words, then .split() each word into codes.",
+    "To go backward you need a reversed dictionary. Build one with a loop: for letter, code in MORSE.items(): ..."
+  ]
+}

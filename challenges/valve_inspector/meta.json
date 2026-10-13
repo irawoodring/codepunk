@@ -1,0 +1,12 @@
+{
+  "title": "Valve Inspector",
+  "tier": "CS1",
+  "topic": "for loops & counting",
+  "cogs": 1,
+  "reward": {"item": "Valve Wheel", "description": "A red iron hand-wheel, warm to the touch. It turns smoothly in either direction.", "color": "#a8402c"},
+  "hints": [
+    "Start a counter at 0 and loop over each character: for v in valves: ...",
+    "For the longest run, keep two numbers: the current run and the best run so far. Reset the current run when you see an 'O'.",
+    "For toggle, build a new string one character at a time with result = result + ..."
+  ]
+}
