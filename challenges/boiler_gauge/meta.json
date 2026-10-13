@@ -1,0 +1,12 @@
+{
+  "title": "Boiler Gauge",
+  "tier": "CS1",
+  "topic": "Arithmetic & if/elif/else",
+  "cogs": 1,
+  "reward": {"item": "Pressure Gauge", "description": "A brass dial with a cracked glass face. The needle still twitches when you breathe on it.", "color": "#d4a64a"},
+  "hints": [
+    "Multiply psi by 0.0689476 to get bar, then use round(value, 2).",
+    "Check the error case first: if psi < 0, raise ValueError(\"pressure can't be negative\").",
+    "Order your if/elif from smallest to largest pressure so each branch only needs one comparison."
+  ]
+}

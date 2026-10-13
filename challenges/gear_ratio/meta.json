@@ -1,0 +1,12 @@
+{
+  "title": "Gear Ratio",
+  "tier": "CS1",
+  "topic": "Functions, // and %",
+  "cogs": 1,
+  "reward": {"item": "Brass Gear", "description": "A twelve-toothed gear, polished to a mirror shine. Someone engraved 'G.R.' on the hub.", "color": "#e0b050"},
+  "hints": [
+    "The ratio is driven / driver. The driver is the gear the engine turns.",
+    "A small gear driving a big gear turns the big gear SLOWER: rpm * driver / driven.",
+    "For full_turns, // gives whole turns and % gives what's left over. Return both as a tuple: (turns, leftover)."
+  ]
+}

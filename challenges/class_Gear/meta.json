@@ -1,0 +1,12 @@
+{
+  "title": "The Gear Class",
+  "tier": "CS2",
+  "topic": "Classes, __init__ & dunder methods",
+  "cogs": 1,
+  "reward": {"item": "Master Cog", "description": "A heavy cog of blackened steel, stamped with the Foundry's seal. It's oddly warm.", "color": "#8a8f98"},
+  "hints": [
+    "Store teeth and material on self in __init__, after checking teeth is at least 6.",
+    "__repr__ must return a string. f\"Gear({self.teeth}, {self.material!r})\" puts quotes around the material.",
+    "__eq__ and __lt__ get another Gear as `other`. Compare self.teeth with other.teeth."
+  ]
+}

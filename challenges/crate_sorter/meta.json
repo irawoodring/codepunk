@@ -1,0 +1,12 @@
+{
+  "title": "Crate Sorter",
+  "tier": "CS2",
+  "topic": "Sorting algorithms",
+  "cogs": 1,
+  "reward": {"item": "Sorting Lens", "description": "Hold it to your eye and the world lines up neatly, smallest to largest.", "color": "#70b0c0"},
+  "hints": [
+    "Copy the list first (crates[:] or list(crates)) so you don't change the original.",
+    "merge: keep an index into each list. Repeatedly take the smaller front item. When one list runs out, add the rest of the other.",
+    "merge_sort: if the list has 0 or 1 items it's already sorted. Otherwise split it in half, merge_sort each half, then merge them."
+  ]
+}

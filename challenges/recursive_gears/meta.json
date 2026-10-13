@@ -1,0 +1,12 @@
+{
+  "title": "Gears Within Gears",
+  "tier": "CS2",
+  "topic": "Recursion",
+  "cogs": 1,
+  "reward": {"item": "Infinite Spring", "description": "A coil that never quite stops unwinding. Looking at it too long makes you dizzy.", "color": "#9a70c0"},
+  "hints": [
+    "Every recursive function needs a base case: an input so small you know the answer right away (an empty list, n == 1...).",
+    "For count_cogs, loop over the items. If an item is a list (isinstance(item, list)), add count_cogs(item); otherwise add 1.",
+    "blueprint_depth of a list is 1 + the biggest depth of any list inside it. A list with no lists inside has depth 1."
+  ]
+}

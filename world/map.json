@@ -1,0 +1,166 @@
+{
+  "tile_size": 32,
+  "rows": [
+    "############################################################",
+    "#,,,,,,,,,#..#P.....P#.#.PPPPP##===========================#",
+    "#,,,,LL,,,#..#...f...#.#......##==XX========PPP============#",
+    "#,,b,,,,,,#..#.......#.#...c..##==XX=======================#",
+    "#,,,,,,,,,#..#..~.~..#.#......##====i=================k====#",
+    "#,,,,,,,,,...#.......#........##===========================#",
+    "#,,,,,,,,,...#.......#.#......##==================~========#",
+    "#,,,,,,t,,#..####.####.#......##===========================#",
+    "#,,,,,,,,,#............#########=============j=============#",
+    "###########........s...........#========================~==#",
+    "#...........L.........L....XXX.#===========================#",
+    "#..............p.@.......a.....#===========================#",
+    "#...........................~..#===========================#",
+    "#..............................#PPPPPPPP===PPPPPPPPPPPPPPPP#",
+    "#..............................#==v========================#",
+    "#..............................P===========----------------#",
+    "#...........L.........L........1=~q===~====~====~====~=l==~#",
+    "#..............................P===========----------------#",
+    "#............PPdPP.............#===========================#",
+    "#WWWWW..WWWWWWWWWWWWWWWW..WWWWW#PPPP===PPPPPPPPPPP===PPPPPP#",
+    "#WWWWW..WWWWWWWWWWWWWWWW..WWWWW#===========================#",
+    "#..............................#==============######2#######",
+    "#.XX.......#####.#####.......~.#=XXXX=======w=#===========##",
+    "#.XX.......#.........#.........#==============#=~=======~=##",
+    "#....e.....#..######.#.....g...#==============#===========##",
+    "#.......XX.#.........#.........#===m==========#===========##",
+    "#..........########..#.........#==============#===========##",
+    "#.XXX......#.........#..XXXXXX.#=======PPPPP==#=====o=====##",
+    "#..........#.#######.#.........#==============#===========##",
+    "#........u.#.........#.........#==============#===========##",
+    "#.XX.......########..#....L....#=========n====#===========##",
+    "#..........#.h.......#.........#==============#=~=======~=##",
+    "#..........###########.........#==============#===========##",
+    "############################################################"
+  ],
+  "legend": {
+    "a": {
+      "type": "chest",
+      "challenge": "boiler_gauge"
+    },
+    "b": {
+      "type": "relic",
+      "challenge": "gear_ratio"
+    },
+    "c": {
+      "type": "chest",
+      "challenge": "telegraph"
+    },
+    "d": {
+      "type": "chest",
+      "challenge": "valve_inspector"
+    },
+    "e": {
+      "type": "chest",
+      "challenge": "cargo_manifest"
+    },
+    "f": {
+      "type": "relic",
+      "challenge": "clocktower"
+    },
+    "g": {
+      "type": "chest",
+      "challenge": "airship_ledger"
+    },
+    "h": {
+      "type": "relic",
+      "challenge": "automaton_walk"
+    },
+    "i": {
+      "type": "chest",
+      "challenge": "class_Gear"
+    },
+    "j": {
+      "type": "relic",
+      "challenge": "class_Automaton"
+    },
+    "k": {
+      "type": "chest",
+      "challenge": "pipe_balancer"
+    },
+    "l": {
+      "type": "chest",
+      "challenge": "class_TrainCars"
+    },
+    "m": {
+      "type": "relic",
+      "challenge": "recursive_gears"
+    },
+    "n": {
+      "type": "chest",
+      "challenge": "crate_sorter"
+    },
+    "o": {
+      "type": "engine",
+      "challenge": "steam_network"
+    },
+    "p": {
+      "type": "npc",
+      "name": "Professor Brassbolt",
+      "style": "professor",
+      "lines": [
+        "Ah! A new apprentice! Welcome to Cogsworth, the city that runs on steam... and on Python.",
+        "Every chest and caged relic in this city is sealed by a puzzle-lock. The locks only open for working code.",
+        "Walk up to a chest and press E. You'll get a problem, a code editor, and a set of tests. Make every test pass and the lock springs open!",
+        "Each lock you open gives you a Brass Cog. Collect six and the great gate to the Aetherforge Foundry, east of here, will open for you.",
+        "Stuck? Every lock has hints. Using them is no shame; every engineer started as an apprentice. Now off you go!"
+      ]
+    },
+    "q": {
+      "type": "npc",
+      "name": "Foreman Ironside",
+      "style": "foreman",
+      "lines": [
+        "So the Professor's apprentice made it through the gate. Good. The Foundry is no place for loops and lists alone.",
+        "Here we build with classes, stacks, linked lists, recursion and sorting algorithms. Proper engineering.",
+        "The Grand Engine sits in the vault to the south-east. Its door won't budge for fewer than twelve cogs.",
+        "Power up the Engine and you'll have done what no engineer has done in a hundred years. Get to it!"
+      ]
+    },
+    "s": {
+      "type": "sign",
+      "text": "COGSWORTH PLAZA\nNorth: Clocktower  -  North-East: Telegraph Office\nSouth: Canal, Docks & the Alleys\nEast: The Aetherforge Foundry (gate sealed)"
+    },
+    "t": {
+      "type": "sign",
+      "text": "THE MOSS GARDEN\nPlease do not feed the gears."
+    },
+    "u": {
+      "type": "sign",
+      "text": "COGSWORTH DOCKS\nAll cargo must be weighed. No exceptions. Especially not ValueErrors."
+    },
+    "v": {
+      "type": "sign",
+      "text": "AETHERFORGE FOUNDRY\nAuthorised engineers only. Mind the steam."
+    },
+    "w": {
+      "type": "sign",
+      "text": "VAULT OF THE GRAND ENGINE\nSealed until twelve Brass Cogs are presented."
+    }
+  },
+  "gates": {
+    "1": {
+      "cogs": 6,
+      "name": "Foundry Gate"
+    },
+    "2": {
+      "cogs": 12,
+      "name": "Vault Door"
+    }
+  },
+  "districts": [
+    {
+      "name": "Cogsworth Commons",
+      "tier": "CS1",
+      "max_x": 31
+    },
+    {
+      "name": "Aetherforge Foundry",
+      "tier": "CS2",
+      "max_x": 999
+    }
+  ]
+}

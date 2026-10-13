@@ -1,0 +1,12 @@
+{
+  "title": "Cargo Manifest",
+  "tier": "CS1",
+  "topic": "Lists & accumulator loops",
+  "cogs": 1,
+  "reward": {"item": "Dock Ledger", "description": "A leather-bound ledger, smelling of coal and tea. Every page is stamped 'APPROVED'.", "color": "#7a5230"},
+  "hints": [
+    "An accumulator loop: total = 0, then add each crate's weight inside the loop.",
+    "For heaviest, start with best = crates[0] and replace it whenever you find a bigger one.",
+    "For load_airship, keep a running total. Before adding a crate, check whether it would go over capacity. If it would, stop the loop with break."
+  ]
+}

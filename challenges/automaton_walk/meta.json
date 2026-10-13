@@ -1,0 +1,12 @@
+{
+  "title": "Wandering Automaton",
+  "tier": "CS1",
+  "topic": "while loops, tuples & 2D grids",
+  "cogs": 1,
+  "reward": {"item": "Automaton Heart", "description": "A tiny ticking engine of springs and crystal. It beats a little faster when you're near.", "color": "#d06a5a"},
+  "hints": [
+    "Keep x and y variables starting at 0, and update one of them for each letter.",
+    "For steps_until_home, check (x, y) == (0, 0) after each move. Use enumerate(commands) to know which step you're on.",
+    "For walk_grid, first find the 'A' with two nested loops. For each move, work out the new row/col, and only move if that spot is inside the grid and isn't '#'."
+  ]
+}

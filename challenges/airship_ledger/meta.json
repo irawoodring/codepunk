@@ -1,0 +1,12 @@
+{
+  "title": "Airship Ledger",
+  "tier": "CS1",
+  "topic": "Dictionaries",
+  "cogs": 1,
+  "reward": {"item": "Captain's Compass", "description": "Its needle points not north, but toward the nearest unpaid fuel bill.", "color": "#5a8a9a"},
+  "hints": [
+    "Start with an empty dict. For each (ship, tons) record: if the ship is already a key, add to it; otherwise set it.",
+    "dict.get(ship, 0) returns 0 when the ship isn't in the dictionary yet. Handy!",
+    "For thirstiest, loop over ledger.items() and remember the best (name, tons) pair you've seen so far."
+  ]
+}
