@@ -1,15 +1,23 @@
-"""Clockwork Codex test harness.
+"""Codepunk test harness.
 
-Runs a student's ``mymodule.py`` against a pytest-style ``test_mymodule.py``
-and prints a single JSON result line prefixed with MARKER.
+Runs a student's ``mymodule.py`` against a pytest-style ``test_mymodule.py``.
 
-    python harness.py <run_dir>
+In the game (web build) this file runs inside Pyodide in the browser, which
+calls ``run_tests(run_dir)`` directly and gets back a result dict.
+
+It also works from the command line with ordinary Python, which is handy for
+checking challenges (tools/check_challenges.py) and for running the game from
+the Godot editor:
+
+    python harness.py <run_dir>     # prints one JSON line prefixed with MARKER
 
 Works whether or not pytest is installed: when it's missing, a small shim
 providing ``approx``, ``raises``, ``fail`` and ``mark.parametrize`` stands in.
-The tests run in a child process so infinite loops can be stopped.
+On the command line the tests run in a child process so infinite loops can be
+stopped.
 """
 import ast
+import builtins
 import contextlib
 import io
 import itertools
@@ -285,25 +293,57 @@ def collect(module):
 
 
 def run_child(run_dir):
+    sys.setrecursionlimit(3000)
+    emit(run_tests(run_dir))
+
+
+def run_tests(run_dir):
+    """Run the tests in `run_dir` in this process and return the result dict.
+
+    Used directly by the web build (Pyodide), where there are no subprocesses;
+    the browser enforces the time limit by stopping the Web Worker instead.
+    """
+    old_cwd = os.getcwd()
     sys.path.insert(0, run_dir)
     os.chdir(run_dir)
-    sys.setrecursionlimit(3000)
-    install_pytest_shim()
+    # Forget modules from a previous run so edited code is re-imported.
+    for name in ("mymodule", "test_mymodule"):
+        sys.modules.pop(name, None)
+    real_input = builtins.input
+    builtins.input = _no_input
+    try:
+        install_pytest_shim()
+        return _run_tests(run_dir)
+    finally:
+        builtins.input = real_input
+        os.chdir(old_cwd)
+        if run_dir in sys.path:
+            sys.path.remove(run_dir)
+        for name in ("mymodule", "test_mymodule"):
+            sys.modules.pop(name, None)
 
+
+def _no_input(prompt=""):
+    raise RuntimeError("input() can't be used in a puzzle-lock: the tests call your "
+                       "functions directly and pass in the values. Use the function's "
+                       "parameters instead of asking for input.")
+
+
+def _run_tests(run_dir):
     student_path = os.path.join(run_dir, "mymodule.py")
     test_path = os.path.join(run_dir, "test_mymodule.py")
     with open(student_path, encoding="utf-8") as f:
         student_src = f.read()
     with open(test_path, encoding="utf-8") as f:
         test_src = f.read()
+    linecache.checkcache()
 
     # 1. Syntax check the student's code first for a clear message.
     try:
         compile(student_src, student_path, "exec")
     except SyntaxError as e:
-        emit({"status": "syntax_error", "line": e.lineno or 0,
-              "message": "SyntaxError on line %s: %s" % (e.lineno, e.msg)})
-        return
+        return {"status": "syntax_error", "line": e.lineno or 0,
+                "message": "SyntaxError on line %s: %s" % (e.lineno, e.msg)}
 
     # 2. Import the test module (which imports the student's module).
     captured = io.StringIO()
@@ -321,9 +361,8 @@ def run_child(run_dir):
             message = ("Couldn't load something the tests need from your code: %s. "
                        "Check that every function or class from the instructions "
                        "exists and is spelled exactly right." % e)
-        emit({"status": "import_error", "message": message, "line": line or 0,
-              "stdout": clip(captured.getvalue())})
-        return
+        return {"status": "import_error", "message": message, "line": line or 0,
+                "stdout": clip(captured.getvalue())}
 
     # 3. Run each test.
     results = []
@@ -343,11 +382,10 @@ def run_child(run_dir):
                         "line": line, "output": clip(out.getvalue(), 400)})
 
     if not results:
-        emit({"status": "no_tests", "message": "No tests were found."})
-        return
-    emit({"status": "ok", "tests": results,
-          "passed": sum(r["passed"] for r in results), "total": len(results),
-          "stdout": clip(captured.getvalue())})
+        return {"status": "no_tests", "message": "No tests were found."}
+    return {"status": "ok", "tests": results,
+            "passed": sum(r["passed"] for r in results), "total": len(results),
+            "stdout": clip(captured.getvalue())}
 
 
 if __name__ == "__main__":

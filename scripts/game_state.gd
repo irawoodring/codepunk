@@ -16,7 +16,6 @@ var hints_shown: Dictionary = {}   # challenge id -> number of hints revealed
 var opened_gates: Dictionary = {}  # gate char -> true
 var talked_to: Dictionary = {}     # npc name -> true
 var player_tile = null             # Vector2i or null for the map's start tile
-var python_cmd: String = ""        # optional override, e.g. "C:/Python312/python.exe"
 var victory: bool = false
 var flags: Dictionary = {}         # misc one-time events, e.g. "announced_gate_1"
 var skip_title := false            # not saved: set when restarting into a new game
@@ -109,7 +108,6 @@ func save_game() -> void:
 		"opened_gates": opened_gates.keys(),
 		"talked_to": talked_to.keys(),
 		"player_tile": [player_tile.x, player_tile.y] if player_tile != null else null,
-		"python_cmd": python_cmd,
 		"victory": victory,
 		"flags": flags,
 	}
@@ -138,7 +136,6 @@ func load_game() -> void:
 	var pt = data.get("player_tile")
 	if pt is Array and pt.size() == 2:
 		player_tile = Vector2i(int(pt[0]), int(pt[1]))
-	python_cmd = str(data.get("python_cmd", ""))
 	victory = bool(data.get("victory", false))
 	flags = data.get("flags", {})
 

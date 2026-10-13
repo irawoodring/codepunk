@@ -1,6 +1,6 @@
 # Codepunk: The Clockwork Codex
 
-A steampunk exploration game, built in **Godot 4**, that teaches **Python** to CS1 and CS2 students.
+A steampunk exploration game, built in **Godot 4**, that teaches **Python** to CS1 and CS2 students. It runs in the web browser, and student code runs in the browser too, with [Pyodide](https://pyodide.org). There's nothing for students to install.
 
 Students explore the steam-powered city of Cogsworth. Every treasure chest and caged relic is sealed by a **puzzle-lock**: a programming problem with a set of tests. Make every test pass and the lock opens. You get the item, plus Brass Cogs that open gates to harder parts of the city.
 
@@ -22,28 +22,42 @@ Students explore the steam-powered city of Cogsworth. Every treasure chest and c
 * Code drafts, hints and progress save automatically. Solved locks can be reopened for practice.
 * Students can skip a couple of CS1 locks and still reach the Foundry (6 of the 8 cogs are needed).
 
-## Running it
+## Playing it
 
-1. Install [Godot 4.3+](https://godotengine.org/download) (the standard build; .NET isn't needed).
-2. Install **Python 3** ([python.org](https://www.python.org/downloads/)). **pytest is _not_ required.**
-3. Open `project.godot` in Godot and press **Play** (F5).
+Once this is merged to `main` and GitHub Pages is turned on (**Settings → Pages → Source: GitHub Actions**), the included workflow builds and publishes the game at:
 
-The game finds Python on its own (`python3`, `python`, `py`, plus common macOS paths). If it can't, the title screen and pause menu let you type the full path to the Python program. The status line shows which Python it's using.
+**https://irawoodring.github.io/codepunk/**
 
-### Exporting for students
+Students just open that link in a desktop browser (Chrome, Edge, Firefox or Safari). The first time they open a puzzle-lock, Python (about 10 MB) loads in the background. After that the browser caches it. Progress and code drafts save in the browser automatically.
 
-`export_presets.cfg` has presets for Windows, macOS and Linux. They already include the non-Godot files the game needs (`challenges/`, `python/`, `world/`). In Godot: **Project → Export**, install the export templates if asked, then export. Students still need Python 3 installed.
+The game is plain static files (`build/web/`), so you can host it on any web server, an LMS, or itch.io. It doesn't need any special server headers.
+
+### Schools that block CDNs
+
+Pyodide is loaded from jsDelivr by default. To host it yourself, copy a Pyodide 0.26.2 release folder to your server and add `?pyodide=<url-of-that-folder>/` to the game's URL, e.g. `https://example.edu/codepunk/?pyodide=https://example.edu/pyodide/`.
+
+## Developing
+
+1. Install [Godot 4.3+](https://godotengine.org/download) (the standard build).
+2. Open `project.godot`.
+3. To play exactly what students get, use the **Remote Debug → Run in Browser** button at the top right of the editor. This needs the web export templates (Godot offers to download them). That runs with Pyodide.
+4. Pressing plain **Play (F5)** runs a desktop window, which has no browser and so no Pyodide. In that mode the game uses your computer's Python 3 if it has one, purely as a convenience for writing challenges. Students never need it.
+
+To build the web version yourself: **Project → Export → Web → Export Project**, or
+
+```sh
+godot --headless --path . --export-release "Web" build/web/index.html
+```
 
 ## How student code is tested
 
 `python/harness.py` runs the student's `mymodule.py` against the challenge's `test_mymodule.py`:
 
-* It runs in a separate process with a **10-second timeout**, so an infinite loop can't freeze the game.
-* It works **with or without pytest**. Without it, a built-in shim provides `pytest.approx`, `pytest.raises`, `pytest.fail` and `@pytest.mark.parametrize`.
+* In the browser it runs inside **Pyodide in a Web Worker** (`web/codepunk_python.js`). If code runs longer than **10 seconds** (an infinite loop, say), the worker is stopped and a fresh one started, so the game never freezes.
+* No pytest is needed. A built-in shim provides `pytest.approx`, `pytest.raises`, `pytest.fail` and `@pytest.mark.parametrize`.
 * `assert a == b` failures are rewritten into `Expected b but got a` messages.
-* Syntax errors, import errors, crashes and `RecursionError` are turned into plain-English messages with line numbers.
-
-Student code runs as normal Python on the student's own machine, with the same permissions as any script they write in class. Nothing is sent over the network.
+* Syntax errors, import errors, crashes, `RecursionError` and `input()` calls are turned into plain-English messages with line numbers.
+* Student code never leaves the student's computer.
 
 ## Adding or changing challenges
 
@@ -121,22 +135,30 @@ scripts/
   interactable.gd         chests, relics, the engine, gates, NPCs, signs
   game_state.gd           progress, inventory, drafts, saving (autoload)
   challenge_library.gd    loads challenges (autoload)
-  python_runner.gd        finds Python and runs the harness on a thread (autoload)
+  python_runner.gd        runs tests via Pyodide (web) or local Python (editor) (autoload)
   steam.gd, markdown.gd   palette/theme/drawing helpers, Markdown -> BBCode
   ui/                     HUD, dialog box, challenge panel, satchel, menus
-python/harness.py         test runner (no pytest needed)
+python/harness.py         test runner (Pyodide or CPython; no pytest needed)
 challenges/               the 15 puzzle-locks
 world/map.json            the city
 tools/                    challenge checker and importer
-tests/smoke_test.tscn     end-to-end test of the real game
+web/codepunk_python.js    Pyodide bridge (runs Python in a Web Worker)
+fonts/                    Libre Baskerville and JetBrains Mono (SIL Open Font License)
+tests/                    end-to-end tests of the real game
+.github/workflows/        builds the web version and publishes it to GitHub Pages
 ```
 
 All art is drawn in code, so there are no image assets to manage.
 
 ## Testing
 
+The GitHub workflow runs these, checks every challenge, and builds the web export on every push and pull request.
+
 ```sh
+# Choosing New Game from the title screen starts a fresh game.
+godot --headless --path . res://tests/new_game_test.tscn
 # End-to-end: opens a chest, runs Python tests, opens a gate, checks saving.
+# (Runs in the desktop window, so it uses local Python 3.)
 godot --path . res://tests/smoke_test.tscn
 # ...and save screenshots of each step:
 godot --path . res://tests/smoke_test.tscn -- --shots=/tmp/shots
@@ -146,5 +168,5 @@ godot --path . res://tests/smoke_test.tscn -- --shots=/tmp/shots
 
 * More districts (e.g. an **Airship Docks** for file I/O and exceptions, or an **Observatory** for dictionaries of dictionaries and complexity).
 * Per-test "partial credit" visuals, like gears on the lock that turn as more tests pass.
-* A teacher export of student progress (`user://save.json` already has everything).
-* A web build using Pyodide in place of local Python.
+* A teacher export of student progress (the browser save already has everything).
+* Mobile/tablet support (an on-screen joystick and keyboard).

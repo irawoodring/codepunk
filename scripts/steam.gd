@@ -22,18 +22,26 @@ const CODE_BG := Color("17110c")
 const TIER_COLORS := {"CS1": COPPER, "CS2": AETHER}
 
 
-static func serif_font() -> SystemFont:
-	var f := SystemFont.new()
-	f.font_names = PackedStringArray(["Georgia", "Palatino Linotype", "Book Antiqua",
-		"Palatino", "DejaVu Serif", "Liberation Serif", "Times New Roman", "serif"])
+## Fonts are bundled (see fonts/, SIL Open Font License) because a web
+## browser doesn't let the game use the computer's installed fonts.
+static func serif_font(weight: int = 400, italic: bool = false) -> Font:
+	var path := "res://fonts/LibreBaskerville-Italic.ttf" if italic else "res://fonts/LibreBaskerville.ttf"
+	return _weighted(load(path), weight)
+
+
+static func mono_font(weight: int = 400) -> Font:
+	var f := _weighted(load("res://fonts/JetBrainsMono.ttf"), weight)
+	# No ligatures: beginners should see ">=" and "!=" exactly as they type them.
+	var ts := TextServerManager.get_primary_interface()
+	f.opentype_features = {ts.name_to_tag("calt"): 0, ts.name_to_tag("liga"): 0}
 	return f
 
 
-static func mono_font() -> SystemFont:
-	var f := SystemFont.new()
-	f.font_names = PackedStringArray(["Consolas", "Menlo", "SF Mono", "DejaVu Sans Mono",
-		"Liberation Mono", "Courier New", "monospace"])
-	return f
+static func _weighted(base: Font, weight: int) -> FontVariation:
+	var v := FontVariation.new()
+	v.base_font = base
+	v.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): weight}
+	return v
 
 
 static func box(bg: Color = WOOD, border: Color = BRASS, width: int = 3, radius: int = 6,
@@ -79,16 +87,9 @@ static func make_theme() -> Theme:
 	t.set_color("default_color", "RichTextLabel", PARCHMENT)
 	var mono := mono_font()
 	t.set_font("mono_font", "RichTextLabel", mono)
-	var bold := serif_font()
-	bold.font_weight = 700
-	t.set_font("bold_font", "RichTextLabel", bold)
-	var italic := serif_font()
-	italic.font_italic = true
-	t.set_font("italics_font", "RichTextLabel", italic)
-	var bold_italic := serif_font()
-	bold_italic.font_weight = 700
-	bold_italic.font_italic = true
-	t.set_font("bold_italics_font", "RichTextLabel", bold_italic)
+	t.set_font("bold_font", "RichTextLabel", serif_font(700))
+	t.set_font("italics_font", "RichTextLabel", serif_font(400, true))
+	t.set_font("bold_italics_font", "RichTextLabel", serif_font(700, true))
 
 	var field := box(CODE_BG, BRASS_DARK, 2, 4, 8)
 	field.shadow_size = 0

@@ -221,7 +221,11 @@ func run_tests() -> void:
 	_clear_error_line()
 	_run_button.disabled = true
 	_status.text = "Running tests..."
-	_output.text = "[color=#b8a888]The lock's gears whirr as it tests your code...[/color]"
+	if PythonRunner.status() == "loading":
+		_output.text = "[color=#b8a888]Warming up the boilers: loading Python in your browser. " \
+			+ "This only takes a few seconds, the first time.[/color]"
+	else:
+		_output.text = "[color=#b8a888]The lock's gears whirr as it tests your code...[/color]"
 	PythonRunner.run_tests(_id, _editor.text, str(challenge.get("tests", "")))
 
 
@@ -301,8 +305,8 @@ func _on_tests_finished(challenge_id: String, result: Dictionary) -> void:
 			_status.text = "Stopped: took too long"
 			_output.text = "[color=%s][b]Time's up![/b][/color]\n%s" % [FAIL_COLOR, message]
 		"no_python":
-			_status.text = "Python not found"
-			_output.text = "[color=%s][b]Python 3 is needed to test your code.[/b][/color]\n%s" % [FAIL_COLOR, message]
+			_status.text = "Python unavailable"
+			_output.text = "[color=%s][b]Python couldn't start.[/b][/color]\n%s" % [FAIL_COLOR, message]
 		_:
 			_status.text = "Something went wrong"
 			_output.text = "[color=%s][b]The test runner hit a problem.[/b][/color]\n[code]%s[/code]" % [FAIL_COLOR, message]

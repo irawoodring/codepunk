@@ -1,6 +1,6 @@
 extends Control
 ## Title screen and pause menu (same panel, different buttons), including
-## the Python setup used to run student code.
+## whether Python (Pyodide) has finished loading.
 
 signal start_requested(new_game: bool)
 
@@ -13,13 +13,13 @@ var _new_game: Button
 var _resume: Button
 var _reset: Button
 var _python_status: Label
-var _python_path: LineEdit
 var _confirm_reset := false
 var _bg: ColorRect
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	visible = false
 	_bg = ColorRect.new()
 	_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_bg)
@@ -53,24 +53,15 @@ func _ready() -> void:
 	_new_game = _button(col, "New Game", _on_new_game)
 	_resume = _button(col, "Resume", hide_menu)
 	_reset = _button(col, "Reset All Progress", _on_reset)
-	_button(col, "Quit", func(): get_tree().quit())
+	var quit := _button(col, "Quit", func(): get_tree().quit())
+	quit.visible = not OS.has_feature("web")  # closing the tab is how you quit a web game
 
 	col.add_child(HSeparator.new())
-	var py_title := Label.new()
-	py_title.text = "Python setup"
-	py_title.add_theme_color_override("font_color", Steam.BRASS)
-	col.add_child(py_title)
 	_python_status = Label.new()
 	_python_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_python_status.add_theme_font_size_override("font_size", 15)
 	col.add_child(_python_status)
-	var row := HBoxContainer.new()
-	col.add_child(row)
-	_python_path = LineEdit.new()
-	_python_path.placeholder_text = "auto-detect (or e.g. C:\\Python312\\python.exe)"
-	_python_path.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(_python_path)
-	_button(row, "Check", _on_check_python)
+	PythonRunner.status_changed.connect(_update_python_status)
 
 
 func _button(parent: Control, text: String, action: Callable) -> Button:
@@ -114,7 +105,6 @@ func _open() -> void:
 	if not visible:
 		GameState.push_modal()
 	visible = true
-	_python_path.text = GameState.python_cmd
 	_update_python_status()
 
 
@@ -143,22 +133,10 @@ func _on_reset() -> void:
 	get_tree().reload_current_scene()
 
 
-func _on_check_python() -> void:
-	GameState.python_cmd = _python_path.text.strip_edges()
-	GameState.save_game()
-	PythonRunner.reset_detection()
-	_update_python_status()
-
-
 func _update_python_status() -> void:
-	var cmd := PythonRunner.detect_python()
-	if cmd == "":
-		_python_status.text = "Python 3 was not found. Install it from python.org, then restart " \
-			+ "the game, or type the full path to python below."
-		_python_status.add_theme_color_override("font_color", Steam.RUST)
-	else:
-		_python_status.text = "Ready: using '%s' (Python %s)" % [cmd, PythonRunner.detected_version]
-		_python_status.add_theme_color_override("font_color", Steam.VERDIGRIS)
+	_python_status.text = PythonRunner.status_text()
+	var colors := {"ready": Steam.VERDIGRIS, "loading": Steam.BRASS, "error": Steam.RUST}
+	_python_status.add_theme_color_override("font_color", colors.get(PythonRunner.status(), Steam.PARCHMENT_DIM))
 
 
 func _input(event: InputEvent) -> void:
