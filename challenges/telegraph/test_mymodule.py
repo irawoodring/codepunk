@@ -36,3 +36,18 @@ def test_longest_word():
 
 def test_longest_word_tie_returns_first():
     assert longest_word(encode("cog gear nut bolt")) == "GEAR"
+
+
+def test_every_letter():
+    # The official Cogsworth table. (Don't change MORSE in your code!)
+    official = {
+        "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.",
+        "G": "--.", "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..",
+        "M": "--", "N": "-.", "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.",
+        "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-",
+        "Y": "-.--", "Z": "--..",
+    }
+    pangram = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
+    expected = " / ".join(" ".join(official[c] for c in word) for word in pangram.split())
+    assert encode(pangram) == expected
+    assert decode(expected) == pangram

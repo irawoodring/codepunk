@@ -34,7 +34,7 @@ Add one entry to the **end** of the log, keeping everything already there. (It s
 
 ### 4. `count_events(path, event)`
 
-Return how many lines in the log **start with** the word `event` (like `"DEPART"`).
+Return how many lines in the log have `event` (like `"DEPART"`) as their **first word**. A line starting `"DEPARTED"` doesn't count as a `"DEPART"`.
 
 ```python
 count_events("log.txt", "DEPART")   # 1

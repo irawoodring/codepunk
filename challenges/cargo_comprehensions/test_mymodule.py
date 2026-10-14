@@ -41,3 +41,11 @@ def test_cargo_grid_rows_are_separate():
     grid[0][0] = "X"
     assert grid[1][0] == ".", "Changing row 0 also changed row 1: every row is the same list!"
     assert grid[2][0] == "."
+
+
+def test_heavy_names_exactly_at_limit():
+    assert heavy_names(CRATES, 30) == ["coal", "iron"]
+
+
+def test_in_tons_rounds_to_three_places():
+    assert in_tons({"dust": 0.4, "box": 1234.4}) == {"dust": 0.0, "box": 1.234}

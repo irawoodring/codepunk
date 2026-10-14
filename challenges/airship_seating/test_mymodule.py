@@ -54,3 +54,28 @@ def test_free_pairs():
     assert free_pairs([[".", ".", "."], [".", "X", "."]]) == 2
     assert free_pairs(chart()) == 1
     assert free_pairs([["."]]) == 0
+
+
+def test_book_corner_seats():
+    seats = [[".", "."], [".", "."]]
+    assert book(seats, 0, 0) is True
+    assert book(seats, 1, 1) is True
+    assert seats == [["X", "."], [".", "X"]]
+
+
+def test_book_just_off_the_edge():
+    seats = chart()
+    assert book(seats, 3, 0) is False
+    assert book(seats, 0, 3) is False
+    assert seats == chart()
+
+
+def test_book_negative_column():
+    # In Python, seats[0][-1] is the LAST seat, so check for negatives yourself!
+    seats = chart()
+    assert book(seats, 0, -1) is False
+    assert seats == chart()
+
+
+def test_best_row_single_row():
+    assert best_row([["X", "."]]) == 0

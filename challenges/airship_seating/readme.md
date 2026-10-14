@@ -32,7 +32,7 @@ first_free(seats)   # (0, 0)
 
 ### 3. `book(seats, row, col)`
 
-Book a seat: if `(row, col)` is on the chart **and** free, change it to `"X"` **in the list you were given** and return `True`. Otherwise (taken, or off the chart) change nothing and return `False`.
+Book a seat: if `(row, col)` is on the chart (no negative numbers!) **and** free, change it to `"X"` **in the list you were given** and return `True`. Otherwise (taken, or off the chart) change nothing and return `False`.
 
 ```python
 book(seats, 0, 0)   # True  (now seats[0][0] == "X")

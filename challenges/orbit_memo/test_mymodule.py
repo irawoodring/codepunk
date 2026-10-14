@@ -41,3 +41,19 @@ def test_longest_shared_signal():
 
 def test_longest_shared_signal_big():
     assert longest_shared_signal("AB" * 150, "BA" * 150) == 299
+
+
+def test_fewest_lenses_single_lens():
+    assert fewest_lenses(1, [1]) == 1
+    assert fewest_lenses(7, [7]) == 1
+    assert fewest_lenses(10, [5, 1]) == 2
+
+
+def test_fewest_lenses_more_greedy_traps():
+    assert fewest_lenses(12, [1, 6, 10]) == 2
+    assert fewest_lenses(6, [4, 3, 1]) == 2
+
+
+def test_fewest_lenses_prefers_the_better_lens():
+    assert fewest_lenses(2, [1, 2]) == 1
+    assert fewest_lenses(4, [1, 2]) == 2

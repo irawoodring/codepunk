@@ -49,3 +49,14 @@ def test_walk_grid_start_elsewhere():
     grid = ["#.#", ".A.", "#.#"]
     assert walk_grid(grid, "N") == (0, 1)
     assert walk_grid(grid, "NE") == (0, 1)
+
+
+def test_walk_grid_south_and_west():
+    grid = ["...", ".A.", "..."]
+    assert walk_grid(grid, "S") == (2, 1)
+    assert walk_grid(grid, "W") == (1, 0)
+    assert walk_grid(grid, "SW") == (2, 0)
+
+
+def test_walk_grid_can_return_to_start():
+    assert walk_grid(GRID, "EW") == (2, 0)

@@ -67,3 +67,16 @@ def test_count_between():
     assert count_between([1, 3, 3, 5, 8, 9], 3, 8) == 4
     assert count_between([1, 3, 3, 5, 8, 9], 10, 20) == 0
     assert count_between(BIG, 0, 2997) == 1000
+
+
+def test_count_checks_exact_on_seven():
+    # With 7 stars, binary search needs 1 check for the middle, 2 for the
+    # quarter points and 3 for the ends.
+    stars = [1, 2, 3, 4, 5, 6, 7]
+    assert [count_checks(stars, t) for t in stars] == [3, 2, 3, 1, 3, 2, 3]
+
+
+def test_count_checks_missing_on_seven():
+    assert count_checks([1, 2, 3, 4, 5, 6, 7], 0) == 3
+    assert count_checks([1, 2, 3, 4, 5, 6, 7], 8) == 3
+    assert count_checks([], 5) == 0

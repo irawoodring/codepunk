@@ -43,3 +43,18 @@ def test_bad_teeth():
         ratio(10, -2)
     with pytest.raises(ValueError):
         output_rpm(100, 10, 0)
+
+
+def test_one_tooth_is_allowed():
+    assert ratio(1, 5) == pytest.approx(5.0)
+    assert output_rpm(10, 1, 1) == pytest.approx(10.0)
+
+
+def test_output_rpm_bad_driver():
+    with pytest.raises(ValueError):
+        output_rpm(100, 0, 10)
+
+
+def test_full_turns_just_under_a_turn():
+    assert full_turns(359) == (0, 359)
+    assert full_turns(1080) == (3, 0)
