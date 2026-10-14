@@ -95,7 +95,12 @@ func _build_ui() -> void:
 	panel.closed.connect(_on_panel_closed)
 	satchel = SatchelScript.new()
 	root.add_child(satchel)
-	satchel.configure(world.districts, world.legend)
+	var lock_districts := {}
+	for obj in world.objects():
+		var entry: Dictionary = world.legend.get(obj["char"], {})
+		if entry.has("challenge"):
+			lock_districts[entry["challenge"]] = world.district_at(world.tile_center(obj["tile"])).get("name", "")
+	satchel.configure(world.districts, lock_districts)
 	menu = MenuScript.new()
 	root.add_child(menu)
 	menu.start_requested.connect(_on_start_requested)

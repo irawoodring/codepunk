@@ -1,0 +1,12 @@
+{
+  "title": "Comet Heap",
+  "tier": "CS2",
+  "topic": "Heaps & priority queues",
+  "cogs": 1,
+  "reward": {"item": "Comet Fragment", "description": "A shard of ice that refuses to melt. It glows faintly whenever someone nearby is in a hurry.", "color": "#7ad0e0"},
+  "hints": [
+    "Store the heap in self.items. For the item at index i, its parent is at (i - 1) // 2 and its children at 2 * i + 1 and 2 * i + 2.",
+    "push: append to the end, then 'bubble up': swap with the parent while it's smaller than its parent.",
+    "pop: remember items[0], move the LAST item to index 0, then 'sink down': swap with the smaller child while a child is smaller."
+  ]
+}

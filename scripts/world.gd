@@ -4,10 +4,12 @@ extends Node2D
 ## Tile legend (see README for the full list):
 ##   #  wall       .  cobblestone   ,  moss      =  foundry grate   -  rails
 ##   W  canal      P  pipes         X  crate     L  lamp post       ~  steam vent
-##   @  player start   1-9  gates   a-z  objects defined in the map's "legend"
+##   S  open sky   _  dock planks   H  airship hull   B  airship balloon
+##   :  marble     T  telescope
+##   @  player start   1-9  gates   other letters: objects in the map's "legend"
 
-const SOLID := "#WLPX"
-const FLOORS := ".,=-~"
+const SOLID := "#WLPXSHBT"
+const FLOORS := ".,=-~_:"
 
 var tile := 32
 var rows: PackedStringArray = []
@@ -67,10 +69,16 @@ func pixel_size() -> Vector2:
 	return Vector2(map_size * tile)
 
 
+## The district containing a world position. Districts are rectangles of
+## tiles ("rect": [x0, y0, x1, y1]); older maps may use "max_x" instead.
 func district_at(p: Vector2) -> Dictionary:
-	var tx := world_to_tile(p).x
+	var t := world_to_tile(p)
 	for d in districts:
-		if tx <= int(d.get("max_x", 9999)):
+		var r = d.get("rect", null)
+		if r is Array and r.size() == 4:
+			if t.x >= int(r[0]) and t.y >= int(r[1]) and t.x <= int(r[2]) and t.y <= int(r[3]):
+				return d
+		elif t.x <= int(d.get("max_x", 9999)):
 			return d
 	return {}
 
@@ -127,14 +135,15 @@ func _floor_for(x: int, y: int) -> String:
 		return c
 	for n in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 		var nc := char_at(x + n.x, y + n.y)
-		if ".,=".contains(nc):
+		if ".,=_:".contains(nc):
 			return nc
 	return "."
 
 
-func _is_foundry(x: int) -> bool:
-	var d := district_at(Vector2(x * tile, 0))
-	return d.get("tier", "CS1") == "CS2"
+## "brick", "iron" or "stone": decides how walls look in each district.
+func _style(x: int, y: int) -> String:
+	var d := district_at(Vector2(x * tile, y * tile))
+	return str(d.get("style", "iron" if d.get("tier", "CS1") == "CS2" else "brick"))
 
 
 func _draw() -> void:
@@ -148,8 +157,16 @@ func _draw() -> void:
 				"W":
 					_draw_water(r, x, y)
 				"P":
-					_draw_floor(r, x, y, "=" if _is_foundry(x) else ".")
+					_draw_floor(r, x, y, {"iron": "=", "stone": ":"}.get(_style(x, y), "."))
 					_draw_pipes(r, x, y)
+				"S":
+					_draw_sky(r, x, y)
+				"H":
+					_draw_sky(r, x, y)
+					_draw_hull(r, x, y)
+				"B":
+					_draw_sky(r, x, y)
+					_draw_balloon(r, x, y)
 				_:
 					_draw_floor(r, x, y, _floor_for(x, y))
 					match c:
@@ -159,6 +176,8 @@ func _draw() -> void:
 							_draw_lamp(r)
 						"~":
 							_draw_vent(r)
+						"T":
+							_draw_telescope(r)
 
 
 func _draw_floor(r: Rect2, x: int, y: int, kind: String) -> void:
@@ -181,6 +200,22 @@ func _draw_floor(r: Rect2, x: int, y: int, kind: String) -> void:
 					draw_rect(Rect2(r.position + Vector2(sx, 4), Vector2(5, tile - 8)), Color("4a3524"))
 				draw_rect(Rect2(r.position + Vector2(0, 8), Vector2(tile, 3)), Color("8a8a92"))
 				draw_rect(Rect2(r.position + Vector2(0, 21), Vector2(tile, 3)), Color("8a8a92"))
+		"_":
+			draw_rect(r, Color("6e4c30"))
+			for row in 4:
+				var yy := r.position.y + row * 8
+				draw_line(Vector2(r.position.x, yy), Vector2(r.end.x, yy), Color("4a3020"), 2)
+				var seam := r.position.x + float((h + row * 37) % 24) + 4.0
+				draw_line(Vector2(seam, yy), Vector2(seam, yy + 8), Color("4a3020"), 1.5)
+				draw_circle(Vector2(seam + 3, yy + 4), 1.0, Color("2a1c12"))
+		":":
+			draw_rect(r, Color("2c3150"))
+			draw_rect(Rect2(r.position + Vector2(1, 1), Vector2(tile - 2, tile - 2)), Color("363d62"))
+			draw_line(r.position + Vector2(4, 6 + h % 20), r.position + Vector2(28, 10 + h % 18), Color("3f4870"), 1)
+			if h % 6 == 0:
+				var c := r.position + Vector2(6 + h % 20, 6 + (h / 7) % 20)
+				draw_line(c - Vector2(3, 0), c + Vector2(3, 0), Color(1, 0.9, 0.6, 0.8), 1)
+				draw_line(c - Vector2(0, 3), c + Vector2(0, 3), Color(1, 0.9, 0.6, 0.8), 1)
 		_:
 			draw_rect(r, Color("3a2e24"))
 			for i in 2:
@@ -192,9 +227,9 @@ func _draw_floor(r: Rect2, x: int, y: int, kind: String) -> void:
 
 
 func _draw_wall(r: Rect2, x: int, y: int) -> void:
-	var foundry := _is_foundry(x)
-	var base := Color("3a3238") if foundry else Color("6b3a2a")
-	var mortar := Color("201a1e") if foundry else Color("3a2018")
+	var style := _style(x, y)
+	var base: Color = {"iron": Color("3a3238"), "stone": Color("4a5068")}.get(style, Color("6b3a2a"))
+	var mortar: Color = {"iron": Color("201a1e"), "stone": Color("2a2e40")}.get(style, Color("3a2018"))
 	draw_rect(r, base)
 	for row in 4:
 		var yy := r.position.y + row * 8
@@ -245,6 +280,59 @@ func _draw_crate(r: Rect2) -> void:
 	draw_rect(c, Color("4a3020"), false, 2)
 	draw_line(c.position, c.end, Color("4a3020"), 2)
 	draw_line(Vector2(c.end.x, c.position.y), Vector2(c.position.x, c.end.y), Color("4a3020"), 2)
+
+
+func _draw_sky(r: Rect2, x: int, y: int) -> void:
+	draw_rect(r, Color("7aa8cc"))
+	var h := _hash(x, y)
+	if h % 3 == 0:
+		var c := r.position + Vector2(8 + h % 16, 10 + (h / 5) % 12)
+		for i in 3:
+			draw_circle(c + Vector2(i * 7 - 7, (i % 2) * -3), 7.0 - (i % 2), Color(1, 1, 1, 0.55))
+	# Planks above cast a shadow onto the clouds below them.
+	if FLOORS.contains(char_at(x, y - 1)):
+		draw_rect(Rect2(r.position, Vector2(tile, 6)), Color(0, 0, 0, 0.18))
+
+
+func _draw_hull(r: Rect2, x: int, y: int) -> void:
+	var hull := Rect2(r.position + Vector2(0, 2), Vector2(tile, tile - 8))
+	if char_at(x - 1, y) != "H":
+		hull = Rect2(hull.position + Vector2(6, 4), hull.size - Vector2(6, 4))
+	if char_at(x + 1, y) != "H":
+		hull.size.x -= 6
+	draw_rect(hull, Color("5a3a22"))
+	draw_line(Vector2(hull.position.x, hull.position.y + 8), Vector2(hull.end.x, hull.position.y + 8), Color("3a2414"), 2)
+	draw_rect(Rect2(hull.position.x, hull.position.y, hull.size.x, 3), Steam.BRASS_DARK)
+	if _hash(x, y) % 2 == 0:
+		var c := hull.get_center() + Vector2(0, 3)
+		draw_circle(c, 4.5, Steam.BRASS)
+		draw_circle(c, 3, Steam.AETHER.darkened(0.3))
+
+
+func _draw_balloon(r: Rect2, x: int, y: int) -> void:
+	var top := char_at(x, y - 1) != "B"
+	var bottom := char_at(x, y + 1) != "B"
+	var body := Rect2(r.position + Vector2(0, 6 if top else 0), Vector2(tile, tile - (6 if top else 0) - (4 if bottom else 0)))
+	for i in 4:
+		var stripe := Rect2(body.position + Vector2(i * 8, 0), Vector2(8, body.size.y))
+		draw_rect(stripe, Color("a83a2c") if (i + x) % 2 == 0 else Color("e8d8b0"))
+	if top:
+		draw_rect(Rect2(body.position, Vector2(tile, 3)), Color(1, 1, 1, 0.25))
+	if bottom:
+		draw_rect(Rect2(body.position + Vector2(0, body.size.y - 3), Vector2(tile, 3)), Color(0, 0, 0, 0.25))
+		draw_line(body.position + Vector2(8, body.size.y), body.position + Vector2(10, body.size.y + 4), Color("3a2414"), 1)
+		draw_line(body.position + Vector2(24, body.size.y), body.position + Vector2(22, body.size.y + 4), Color("3a2414"), 1)
+
+
+func _draw_telescope(r: Rect2) -> void:
+	var foot := r.position + Vector2(16, 28)
+	draw_colored_polygon(Steam.ellipse(foot, 10, 3), Color(0, 0, 0, 0.35))
+	for dx in [-8, 0, 8]:
+		draw_line(r.position + Vector2(16, 16), foot + Vector2(dx, 0), Color("2a2026"), 2)
+	draw_line(r.position + Vector2(6, 22), r.position + Vector2(28, 2), Steam.BRASS_DARK, 7)
+	draw_line(r.position + Vector2(6, 22), r.position + Vector2(28, 2), Steam.BRASS, 4)
+	draw_circle(r.position + Vector2(28, 2), 4, Steam.BRASS_LIGHT)
+	draw_circle(r.position + Vector2(28, 2), 2.5, Steam.AETHER.darkened(0.4))
 
 
 func _draw_lamp(r: Rect2) -> void:

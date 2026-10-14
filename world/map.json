@@ -34,6 +34,28 @@
     "#.XX.......########..#....L....#=========n====#===========##",
     "#..........#.h.......#.........#==============#=~=======~=##",
     "#..........###########.........#==============#===========##",
+    "#####3################################4#####################",
+    "#SSS___SSSSSSSSSSSSSSSSSSSSSSSS#:::::::::::::::::::::::::::#",
+    "#L_____K____L_____X__L_________#::L:V:::Y::::L:::::::::::L:#",
+    "#__________J___________________#::::::::::::::::M::::::::::#",
+    "#_______XX____________________L#:::::::::::::::::::::::N:::#",
+    "#SS___SSSSSSS___SSSSSSSS___SSSS#:::::::::::::::::::::::::::#",
+    "#SS___SBBBBBS___SSSSSSSS___BBBB#######:#############:#######",
+    "#SS___SBBBBBS___SSSSSSSS_I_BBBB#:::::::#:::::::::::::::::::#",
+    "#SS___SSHHHSS___SSSSSSSS___BBBB#:::::::#:::::::::::::::::::#",
+    "#SS___SSSSSSS___SSSSSSSS___SHHS#:::::::#::::######:######::#",
+    "#SS___SSSS__________SSSS___SSSS#::O::::#::::#:::::::::::#::#",
+    "#SS___SSSS_______E__SSSS___SSSS#:::::::#::::#:T:::::::T:#::#",
+    "#SS___SSSS____D_____SSSS___SSSS#:::::::#::::#:::::::::::#::#",
+    "#SS___SSSS__________SSSS___SSSS#::::::::::::#:::::::::::#::#",
+    "#SS___SSSS_________XSSSS___SSSS#:::::::#::::#:::::T:::::#::#",
+    "#SS___SSSSSSSSSSSSSSSSSS___SSSS#:::::::#::::#:::::::::::#::#",
+    "#XX_______SSSSSSSBBBBBB________#:::::::#::R:#:::::::::::#::#",
+    "#_________SSSSSSSBBBBBB________#:::::::#::::#:::::::::::#::#",
+    "#____C____SSSSSSSSHHHH______F__#::::Q::#::::#:::::U:::::#::#",
+    "#_________SSSSSSSSSS__G________#:::::::#:L::#:::::::::::#L:#",
+    "#__L______SSSSSSSSSS_________L_#:::::::#::::#############::#",
+    "#SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS#:::::::#:::::::::::::::::::#",
     "############################################################"
   ],
   "legend": {
@@ -105,7 +127,7 @@
         "Ah! A new apprentice! Welcome to Cogsworth, the city that runs on steam... and on Python.",
         "Every chest and caged relic in this city is sealed by a puzzle-lock. The locks only open for working code.",
         "Walk up to a chest and press E. You'll get a problem, a code editor, and a set of tests. Make every test pass and the lock springs open!",
-        "Each lock you open gives you a Brass Cog. Collect six and the great gate to the Aetherforge Foundry, east of here, will open for you.",
+        "Each lock you open gives you a Brass Cog. With four cogs, the gate in the south wall opens to the Skyport Docks. With six, the great gate east to the Aetherforge Foundry opens too.",
         "Stuck? Every lock has hints. Using them is no shame; every engineer started as an apprentice. Now off you go!"
       ]
     },
@@ -116,13 +138,13 @@
       "lines": [
         "So the Professor's apprentice made it through the gate. Good. The Foundry is no place for loops and lists alone.",
         "Here we build with classes, stacks, linked lists, recursion and sorting algorithms. Proper engineering.",
-        "The Grand Engine sits in the vault to the south-east. Its door won't budge for fewer than twelve cogs.",
+        "South of here is the Celestial Observatory: its gate wants fourteen cogs. The Grand Engine's vault, in the south-east corner, won't budge for fewer than twenty.",
         "Power up the Engine and you'll have done what no engineer has done in a hundred years. Get to it!"
       ]
     },
     "s": {
       "type": "sign",
-      "text": "COGSWORTH PLAZA\nNorth: Clocktower  -  North-East: Telegraph Office\nSouth: Canal, Docks & the Alleys\nEast: The Aetherforge Foundry (gate sealed)"
+      "text": "COGSWORTH PLAZA\nNorth: Clocktower  -  North-East: Telegraph Office\nSouth: Canal, Wharf, Alleys and the Skyport Docks gate\nEast: The Aetherforge Foundry (gate sealed)"
     },
     "t": {
       "type": "sign",
@@ -130,7 +152,7 @@
     },
     "u": {
       "type": "sign",
-      "text": "COGSWORTH DOCKS\nAll cargo must be weighed. No exceptions. Especially not ValueErrors."
+      "text": "COGSWORTH WHARF\nAll cargo must be weighed. No exceptions. Especially not ValueErrors.\nAirships leave from the Skyport: through the gate just south-west of here."
     },
     "v": {
       "type": "sign",
@@ -138,7 +160,85 @@
     },
     "w": {
       "type": "sign",
-      "text": "VAULT OF THE GRAND ENGINE\nSealed until twelve Brass Cogs are presented."
+      "text": "VAULT OF THE GRAND ENGINE\nSealed until twenty Brass Cogs are presented."
+    },
+    "C": {
+      "type": "chest",
+      "challenge": "cargo_inspector"
+    },
+    "D": {
+      "type": "chest",
+      "challenge": "ships_log"
+    },
+    "E": {
+      "type": "relic",
+      "challenge": "passenger_sets"
+    },
+    "F": {
+      "type": "chest",
+      "challenge": "crate_labels"
+    },
+    "G": {
+      "type": "relic",
+      "challenge": "cargo_comprehensions"
+    },
+    "I": {
+      "type": "chest",
+      "challenge": "airship_seating"
+    },
+    "M": {
+      "type": "chest",
+      "challenge": "star_search"
+    },
+    "N": {
+      "type": "relic",
+      "challenge": "class_ConstellationTree"
+    },
+    "O": {
+      "type": "chest",
+      "challenge": "class_CometHeap"
+    },
+    "Q": {
+      "type": "chest",
+      "challenge": "orbit_memo"
+    },
+    "R": {
+      "type": "relic",
+      "challenge": "telescope_generators"
+    },
+    "U": {
+      "type": "relic",
+      "challenge": "constellation_backtracking"
+    },
+    "J": {
+      "type": "npc",
+      "name": "Dockmaster Quill",
+      "style": "professor",
+      "lines": [
+        "Mind the edge, apprentice! It's a long way down to the clouds.",
+        "Up here at the Skyport, nothing ever arrives the way it should. Labels are smudged, logs go missing, passengers turn up twice.",
+        "A good engineer expects bad data: catch the errors before they sink the ship. Every chest on these piers will teach you something about that.",
+        "Files, sets, neat formatting, clever one-line comprehensions... master the Docks and the Foundry's classes will feel like a breeze."
+      ]
+    },
+    "K": {
+      "type": "sign",
+      "text": "SKYPORT DOCKS\nAirships moored to the west, middle and east piers.\nKeep to the boardwalks. The sky is not a floor."
+    },
+    "V": {
+      "type": "npc",
+      "name": "Astronomer Vega",
+      "style": "foreman",
+      "lines": [
+        "Shh! The stars are listening. Welcome to the Celestial Observatory.",
+        "Out here, the problems are too big to try every answer one by one. We halve them, we heap them, we remember them.",
+        "Binary search, trees, heaps, memoization, generators and backtracking: an astronomer's toolkit.",
+        "Earn enough cogs and the Grand Engine's vault, back in the Foundry, will finally open to you."
+      ]
+    },
+    "Y": {
+      "type": "sign",
+      "text": "CELESTIAL OBSERVATORY\nThe Great Dome lies to the south-east. West Wing: computing hall.\nPlease do not touch the telescopes."
     }
   },
   "gates": {
@@ -147,20 +247,62 @@
       "name": "Foundry Gate"
     },
     "2": {
-      "cogs": 12,
+      "cogs": 20,
       "name": "Vault Door"
+    },
+    "3": {
+      "cogs": 4,
+      "name": "Skyport Gate"
+    },
+    "4": {
+      "cogs": 14,
+      "name": "Observatory Gate"
     }
   },
   "districts": [
     {
       "name": "Cogsworth Commons",
       "tier": "CS1",
-      "max_x": 31
+      "style": "brick",
+      "rect": [
+        0,
+        0,
+        31,
+        33
+      ]
     },
     {
       "name": "Aetherforge Foundry",
       "tier": "CS2",
-      "max_x": 999
+      "style": "iron",
+      "rect": [
+        32,
+        0,
+        59,
+        33
+      ]
+    },
+    {
+      "name": "Skyport Docks",
+      "tier": "CS1",
+      "style": "brick",
+      "rect": [
+        0,
+        34,
+        31,
+        55
+      ]
+    },
+    {
+      "name": "Celestial Observatory",
+      "tier": "CS2",
+      "style": "stone",
+      "rect": [
+        32,
+        34,
+        59,
+        55
+      ]
     }
   ]
 }

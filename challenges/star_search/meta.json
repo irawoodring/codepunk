@@ -1,0 +1,12 @@
+{
+  "title": "Star Search",
+  "tier": "CS2",
+  "topic": "Binary search",
+  "cogs": 1,
+  "reward": {"item": "Star Chart", "description": "A chart of ten thousand stars, sorted by brightness. You can find any of them in fourteen glances.", "color": "#5a6ac0"},
+  "hints": [
+    "Keep two indexes, lo and hi. Look at the middle: mid = (lo + hi) // 2. If the target is bigger, search the right half (lo = mid + 1); if smaller, the left half (hi = mid - 1).",
+    "count_checks is the same loop as binary_search, with a counter that goes up each time you look at stars[mid].",
+    "first_at_least: keep lo = 0 and hi = len(stars). While lo < hi: if stars[mid] < value, lo = mid + 1, else hi = mid. Return lo."
+  ]
+}

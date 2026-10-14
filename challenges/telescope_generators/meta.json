@@ -1,0 +1,12 @@
+{
+  "title": "Telescope Feed",
+  "tier": "CS2",
+  "topic": "Generators & iterators",
+  "cogs": 1,
+  "reward": {"item": "Clockwork Lens", "description": "A lens that only shows you one star at a time, but never runs out of stars.", "color": "#60b0d0"},
+  "hints": [
+    "Any function containing `yield` is a generator. `yield x` hands out one value and pauses until the next one is asked for.",
+    "take(iterable, n): call it = iter(iterable) and then next(it) n times, stopping early if you hit StopIteration. Never call list() on the whole thing: it might be infinite!",
+    "For Orbit, write __iter__ as a generator method (with yield inside). Each call to __iter__ then starts a fresh, independent loop."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Cargo Inspector",
+  "tier": "CS1",
+  "topic": "Exceptions: try / except / raise",
+  "cogs": 1,
+  "reward": {"item": "Inspector's Stamp", "description": "A heavy brass stamp that reads REJECTED on one side and APPROVED on the other. It has never been wrong.", "color": "#c05a3a"},
+  "hints": [
+    "float(\"12.5\") works, but float(\"heavy\") raises ValueError. Use .strip() and check .endswith(\"kg\") first.",
+    "In total_weight, wrap the call to parse_weight in try / except ValueError, and count the failures in the except block.",
+    "For lookup_berth, try returning berths[ship] and catch KeyError. For split_load, catch ZeroDivisionError."
+  ]
+}
