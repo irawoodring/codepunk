@@ -48,3 +48,7 @@ def test_mesh_ratio():
 def test_is_compatible():
     assert Gear(10).is_compatible(Gear(50)) is True
     assert Gear(10).is_compatible(Gear(10, "steel")) is False
+
+
+def test_equal_teeth_not_less_than():
+    assert not (Gear(10) < Gear(10))

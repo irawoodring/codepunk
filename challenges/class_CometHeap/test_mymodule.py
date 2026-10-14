@@ -80,3 +80,10 @@ def test_closest_comets():
     assert closest_comets([42, 7, 19, 3, 88], 3) == [3, 7, 19]
     assert closest_comets([5, 1], 10) == [1, 5]
     assert closest_comets([], 2) == []
+
+
+def test_duplicates():
+    h = MinHeap()
+    for d in [5, 1, 5, 1]:
+        h.push(d)
+    assert [h.pop() for _ in range(4)] == [1, 1, 5, 5]

@@ -44,3 +44,7 @@ def test_load_airship_exact_fit():
 def test_load_airship_nothing_fits():
     assert load_airship([600, 10], 500) == 0
     assert load_airship([], 500) == 0
+
+
+def test_overweight_exactly_at_limit():
+    assert overweight([100, 101, 99], 100) == [101]

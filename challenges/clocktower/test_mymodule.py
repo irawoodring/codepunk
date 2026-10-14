@@ -47,3 +47,8 @@ def test_total_chimes_whole_day():
 def test_quiet_hours():
     assert quiet_hours(3) == [1, 2, 13, 14]
     assert quiet_hours(1) == []
+
+
+def test_quiet_hours_covers_whole_day():
+    assert quiet_hours(12) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+                               13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]

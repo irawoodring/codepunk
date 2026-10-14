@@ -54,3 +54,15 @@ def test_split_load():
 
 def test_split_load_zero_holds():
     assert split_load(100, 0) is None
+
+
+def test_parse_weight_zero_is_fine():
+    assert parse_weight("0kg") == 0
+
+
+def test_total_weight_rounds_to_two_places():
+    assert total_weight(["1.111", "2.222"]) == (pytest.approx(3.33), 0)
+
+
+def test_lookup_berth_zero():
+    assert lookup_berth({"Moth": 0}, "Moth") == 0

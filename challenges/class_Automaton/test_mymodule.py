@@ -92,3 +92,16 @@ def test_total_steam():
     bots = [Automaton("A", 10), WelderBot("B", 20), CourierBot("C", 30)]
     assert total_steam(bots) == 60
     assert total_steam([]) == 0
+
+
+def test_work_can_use_every_last_drop():
+    a = Automaton("Tock", 30)
+    a.work(3)
+    assert a.steam == 0
+
+
+def test_weld_with_exactly_enough_steam():
+    w = WelderBot("Sparky", 5)
+    w.weld()
+    assert w.steam == 0
+    assert w.welds == 1

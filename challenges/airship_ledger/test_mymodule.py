@@ -41,3 +41,7 @@ def test_refuel_existing_and_new():
     refuel(ledger, "Zephyr", 3)
     assert ledger == {"Sparrow": 25, "Zephyr": 3}
     assert result is None
+
+
+def test_ships_below_exactly_at_threshold():
+    assert ships_below({"Sparrow": 20, "Kestrel": 5}, 20) == ["Kestrel"]

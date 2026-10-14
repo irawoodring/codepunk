@@ -68,3 +68,9 @@ def test_count_events_start_of_line_only():
     path = make_path()
     write_log(path, ["ARRIVE DEPART-Express 07:00"])
     assert count_events(path, "DEPART") == 0
+
+
+def test_count_events_whole_word_only():
+    path = make_path()
+    write_log(path, ["DEPARTED Moth 08:00", "DEPART Moth 08:30"])
+    assert count_events(path, "DEPART") == 1

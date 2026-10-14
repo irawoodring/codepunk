@@ -74,3 +74,12 @@ def test_many_random_stars():
     assert t.in_order() == sorted(names)
     assert all(n in t for n in names[:20])
     assert "Star999" not in t
+
+
+def test_insert_below_root_returns_true():
+    t = build(["Polaris"])
+    assert t.insert("Altair") is True
+    assert t.insert("Vega") is True
+    assert t.insert("Betelgeuse") is True
+    assert t.insert("Betelgeuse") is False
+    assert len(t) == 4

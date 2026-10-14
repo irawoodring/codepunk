@@ -52,3 +52,9 @@ def test_progress_bar_width():
 def test_progress_bar_zero_total():
     with pytest.raises(ValueError):
         progress_bar(1, 0)
+
+
+def test_money_zero_and_small():
+    assert money(0) == "$0.00"
+    assert money(0.5) == "$0.50"
+    assert money(-0.5) == "-$0.50"
