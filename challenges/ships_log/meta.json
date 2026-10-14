@@ -1,0 +1,12 @@
+{
+  "title": "The Ship's Log",
+  "tier": "CS1",
+  "topic": "Reading & writing files",
+  "cogs": 1,
+  "reward": {"item": "Logbook Quill", "description": "A raven-feather quill that never runs dry. It writes slightly neater than you do.", "color": "#4a4a6a"},
+  "hints": [
+    "with open(path, \"w\") as f: opens a file for writing (erasing what was there). Use \"a\" to add to the end instead, and \"r\" to read.",
+    "f.write(entry + \"\\n\") writes one line. When reading, line.rstrip(\"\\n\") removes the newline.",
+    "To handle a missing file, wrap the open() in try / except FileNotFoundError and return []."
+  ]
+}

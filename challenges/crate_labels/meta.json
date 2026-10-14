@@ -1,0 +1,12 @@
+{
+  "title": "Crate Labels",
+  "tier": "CS1",
+  "topic": "String formatting & f-strings",
+  "cogs": 1,
+  "reward": {"item": "Stencil Set", "description": "Brass letter stencils in a velvet roll. The Q is missing; nobody knows why.", "color": "#8a9a5a"},
+  "hints": [
+    "In an f-string, {x:.<12} pads x with dots on the right to 12 characters, and {w:>8.2f} right-aligns a number in 8 characters with 2 decimals.",
+    "name[:12] cuts a string down to at most 12 characters. Do that before padding.",
+    "{amount:,.2f} adds thousands commas: f\"{1234.5:,.2f}\" is \"1,234.50\". Handle negatives by formatting abs(amount) and adding the minus sign yourself."
+  ]
+}

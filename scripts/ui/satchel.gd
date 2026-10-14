@@ -4,7 +4,7 @@ extends Control
 var _list: VBoxContainer
 var _progress: Label
 var _districts: Array = []
-var _legend: Dictionary = {}
+var _lock_districts: Dictionary = {}   # challenge id -> district name
 var _frame: PanelContainer
 var _close: Button
 
@@ -69,9 +69,10 @@ func apply_layout() -> void:
 	_close.text = "Close" if Platform.is_mobile else "Close  (Tab)"
 
 
-func configure(districts: Array, legend: Dictionary) -> void:
+## lock_districts maps each challenge id on the map to its district's name.
+func configure(districts: Array, lock_districts: Dictionary) -> void:
 	_districts = districts
-	_legend = legend
+	_lock_districts = lock_districts
 
 
 func toggle() -> void:
@@ -88,22 +89,21 @@ func _refresh() -> void:
 	for child in _list.get_children():
 		child.queue_free()
 
-	# Progress per tier, counted from the map's legend.
+	# Progress per district.
 	var totals := {}
 	var solved := {}
-	for entry in _legend.values():
-		if not entry.has("challenge"):
-			continue
-		var tier := str(Challenges.get_challenge(entry["challenge"]).get("tier", "?"))
-		totals[tier] = int(totals.get(tier, 0)) + 1
-		if GameState.is_solved(entry["challenge"]):
-			solved[tier] = int(solved.get(tier, 0)) + 1
+	for id in _lock_districts:
+		var district: String = _lock_districts[id]
+		totals[district] = int(totals.get(district, 0)) + 1
+		if GameState.is_solved(id):
+			solved[district] = int(solved.get(district, 0)) + 1
 	var parts := PackedStringArray()
 	for d in _districts:
-		var tier := str(d.get("tier", ""))
-		parts.append("%s (%s): %d / %d locks" % [d.get("name", ""), tier, int(solved.get(tier, 0)), int(totals.get(tier, 0))])
+		var district := str(d.get("name", ""))
+		parts.append("%s (%s): %d / %d locks" % [district, d.get("tier", ""),
+			int(solved.get(district, 0)), int(totals.get(district, 0))])
 	parts.append("Brass Cogs: %d" % GameState.cogs)
-	_progress.text = ("\n" if Platform.compact else "     ").join(parts)
+	_progress.text = "\n".join(parts)
 
 	if GameState.inventory.is_empty():
 		var empty := Label.new()

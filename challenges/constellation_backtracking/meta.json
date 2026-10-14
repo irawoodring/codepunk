@@ -1,0 +1,12 @@
+{
+  "title": "Constellation Puzzles",
+  "tier": "CS2",
+  "topic": "Recursion & backtracking",
+  "cogs": 1,
+  "reward": {"item": "Astrolabe", "description": "An ancient brass astrolabe. Turn its rings and it shows every possible sky, one after another.", "color": "#b0a0e0"},
+  "hints": [
+    "arrangements: for each star, take it out, find every arrangement of the REST (recursively), and put the star in front of each one. An empty list has exactly one arrangement: [].",
+    "subsets_with_sum: at each position you have two choices, include nums[i] or skip it. Recurse on both; when you reach the end, keep the subset if its sum is target.",
+    "queens: place one queen per row. For each column in the current row, if it's safe (no queen in the same column or diagonal), place it, recurse to the next row, then remove it (that's the backtrack)."
+  ]
+}

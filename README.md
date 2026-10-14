@@ -11,16 +11,18 @@ Students explore the steam-powered city of Cogsworth. Every treasure chest and c
 
 | District | Level | Gate |
 |---|---|---|
-| **Cogsworth Commons** | CS1: arithmetic, `if`/`elif`, functions, strings, loops, lists, dictionaries, tuples, 2D grids | Open from the start |
-| **Aetherforge Foundry** | CS2: classes, dunder methods, inheritance, stacks, linked lists, recursion, sorting algorithms | Foundry Gate: 6 cogs |
-| **Vault of the Grand Engine** | CS2 finale: graphs and breadth-first search | Vault Door: 12 cogs |
+| **Cogsworth Commons** (8 locks) | CS1: arithmetic, `if`/`elif`, functions, strings, loops, lists, dictionaries, tuples, 2D grids | Open from the start |
+| **Skyport Docks** (6 locks) | CS1: exceptions, reading & writing files, sets, string formatting, comprehensions, 2D lists | Skyport Gate (south of the Commons): 4 cogs |
+| **Aetherforge Foundry** (6 locks) | CS2: classes, dunder methods, inheritance, stacks, linked lists, recursion, sorting algorithms | Foundry Gate (east of the Commons): 6 cogs |
+| **Celestial Observatory** (6 locks) | CS2: binary search, binary search trees, heaps, memoization, generators & iterators, backtracking | Observatory Gate (south of the Foundry): 14 cogs |
+| **Vault of the Grand Engine** | CS2 finale: graphs and breadth-first search | Vault Door: 20 cogs |
 
 * **Move:** WASD or arrow keys. **Interact:** E or Space. **Satchel:** Tab. **Menu:** Esc.
 * In a puzzle-lock: the problem is on the left and a Python editor is on the right. **Ctrl+Enter** runs the tests.
 * Each failing test says what went wrong, e.g. `Expected 'cold' but got None`. Errors and crashes highlight the line in the student's code that caused them.
 * Every lock has 2–3 hints that the student can reveal one at a time.
 * Code drafts, hints and progress save automatically. Solved locks can be reopened for practice.
-* Students can skip a couple of CS1 locks and still reach the Foundry (6 of the 8 cogs are needed).
+* The gates leave room to skip things. CS2 students can go straight from the Commons to the Foundry (6 cogs), and there are 26 cogs to earn before the Vault, which needs 20. Change the numbers in `world/map.json`'s `gates` to suit your class.
 
 ## Playing it
 
@@ -124,9 +126,12 @@ The map is ASCII art in `world/map.json` (`rows`). Each character is a 32×32 ti
 | `P` | copper pipes (solid) | `=` | foundry grate |
 | `X` | crate (solid) | `-` | rail track |
 | `L` | lamp post (solid) | `~` | steam vent |
+| `S` | open sky (solid) | `_` | dock planks |
+| `H` | airship hull (solid) | `:` | observatory marble |
+| `B` | airship balloon (solid) | `T` | telescope (solid) |
 | `@` | player start | `1`–`9` | gates, defined in `gates` with the cogs they need |
 
-Lowercase letters are objects defined in `legend`:
+Any other letter is an object defined in `legend`:
 
 ```json
 "a": {"type": "chest",  "challenge": "boiler_gauge"},
@@ -136,7 +141,7 @@ Lowercase letters are objects defined in `legend`:
 "s": {"type": "sign", "text": "COGSWORTH PLAZA"}
 ```
 
-`districts` sets the name and tier shown in the HUD for each column range of the map.
+`districts` lists rectangles of tiles (`"rect": [x0, y0, x1, y1]`) with a name and tier for the HUD and satchel, and a wall `style` (`brick`, `iron` or `stone`).
 
 ## Project layout
 
@@ -154,7 +159,7 @@ scripts/
   platform.gd             detects phones, scales the UI, opens the phone code editor (autoload)
   ui/                     HUD, dialog box, challenge panel, satchel, menus, touch controls
 python/harness.py         test runner (Pyodide or CPython; no pytest needed)
-challenges/               the 15 puzzle-locks
+challenges/               the 27 puzzle-locks
 world/map.json            the city
 tools/                    challenge checker and importer
 web/codepunk_python.js    Pyodide bridge (runs Python in a Web Worker)

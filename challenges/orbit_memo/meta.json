@@ -1,0 +1,12 @@
+{
+  "title": "Orbital Calculations",
+  "tier": "CS2",
+  "topic": "Memoization & dynamic programming",
+  "cogs": 1,
+  "reward": {"item": "Difference Engine Cog", "description": "A single gear from Babbage's great calculating engine. It remembers every number it has ever turned past.", "color": "#c8a050"},
+  "hints": [
+    "Plain recursion recomputes the same answers again and again. Store answers in a dictionary (memo) and check it first, or put @functools.lru_cache(maxsize=None) above the function.",
+    "fewest_lenses: build a list best[0..focus] where best[0] = 0 and best[x] = 1 + min(best[x - lens]) over lenses that fit. Use a huge number for 'impossible'.",
+    "longest_shared_signal: make a table where cell [i][j] is the answer for a[:i] and b[:j]. If a[i-1] == b[j-1], it's table[i-1][j-1] + 1; otherwise the bigger of table[i-1][j] and table[i][j-1]."
+  ]
+}

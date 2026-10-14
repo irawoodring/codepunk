@@ -126,7 +126,8 @@
           status: "timeout",
           message: "Your code ran for more than " + (TIMEOUT_MS / 1000) + " seconds and was stopped. " +
             "Look for a loop that never ends (a while loop whose condition never becomes False, " +
-            "or recursion with no base case).",
+            "or recursion with no base case), or an approach that's too slow for big inputs " +
+            "(like recursion that recomputes the same answers).",
         }));
       }, TIMEOUT_MS),
     };

@@ -152,6 +152,33 @@ func _run() -> void:
 	await frames(40)
 	await shot("08_vault")
 
+	# The southern districts: gates need the right number of cogs.
+	var skyport := find_object("3")
+	var observatory := find_object("4")
+	check(skyport != null and observatory != null, "Skyport and Observatory gates exist")
+	main._on_interact(skyport)
+	await frames(5)
+	check(GameState.opened_gates.has("3"), "Skyport gate opens with 6 cogs (needs 4)")
+	main._on_interact(observatory)
+	await frames(5)
+	check(not GameState.opened_gates.has("4") and main.dialog.visible, "Observatory gate stays shut without 14 cogs")
+	for i in 4:
+		main.dialog._advance()
+	main.player.position = find_object("J").position + Vector2(40, 32)
+	await frames(40)
+	check(main.world.district_at(main.player.position).get("name") == "Skyport Docks", "player is in the Skyport Docks")
+	await shot("09_docks")
+	main.player.position = find_object("F").position + Vector2(-40, 0)
+	await frames(40)
+	await shot("10_docks_piers")
+	main.player.position = find_object("M").position + Vector2(0, 40)
+	await frames(40)
+	check(main.world.district_at(main.player.position).get("name") == "Celestial Observatory", "district lookup finds the Observatory")
+	await shot("11_observatory")
+	main.player.position = find_object("U").position + Vector2(0, -48)
+	await frames(40)
+	await shot("12_observatory_dome")
+
 	# Saving round-trips.
 	GameState.save_game()
 	GameState.solved.clear()

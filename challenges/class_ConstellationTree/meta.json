@@ -1,0 +1,12 @@
+{
+  "title": "The Constellation Tree",
+  "tier": "CS2",
+  "topic": "Binary search trees",
+  "cogs": 1,
+  "reward": {"item": "Orrery Key", "description": "A key shaped like a tiny solar system. The planets still turn when you wind it.", "color": "#9a7ad0"},
+  "hints": [
+    "A recursive helper is easiest: _insert(node, name) returns the node after inserting. If node is None, return StarNode(name).",
+    "Names compare alphabetically: \"Altair\" < \"Vega\" is True. Smaller names go left, bigger go right.",
+    "in_order(node) = in_order(node.left) + [node.name] + in_order(node.right). height(None) is 0."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Express Loading",
+  "tier": "CS1",
+  "topic": "List, set & dict comprehensions",
+  "cogs": 1,
+  "reward": {"item": "Pneumatic Gloves", "description": "Brass-knuckled gloves with tiny pistons in every finger. Lifting crates feels like lifting teacups.", "color": "#7a8a9a"},
+  "hints": [
+    "A list comprehension looks like [expression for item in things if condition].",
+    "Dict comprehension: {key: value for name, kg in crates.items()}. Set comprehension: {x for x in things}.",
+    "[[\".\"] * cols] * rows makes rows copies of the SAME list, so changing one row changes them all. Build a new list for every row: [[\".\" for c in range(cols)] for r in range(rows)]."
+  ]
+}

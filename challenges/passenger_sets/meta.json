@@ -1,0 +1,12 @@
+{
+  "title": "Passenger Manifest",
+  "tier": "CS1",
+  "topic": "Sets",
+  "cogs": 1,
+  "reward": {"item": "Boarding Pass", "description": "A gilt-edged ticket valid for one voyage to anywhere. The destination is left blank.", "color": "#d8b860"},
+  "hints": [
+    "set(names) removes duplicates. len(set(names)) counts distinct names.",
+    "Sets have operators: a & b (in both), a - b (in a but not b), a ^ b (in exactly one).",
+    "sorted(some_set) turns a set into a sorted list."
+  ]
+}

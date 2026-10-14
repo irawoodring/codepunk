@@ -63,7 +63,8 @@ def run_parent(run_dir):
             "message": "Your code ran for more than %d seconds and was stopped. "
                        "Look for a loop that never ends (a while loop whose "
                        "condition never becomes False, or recursion with no "
-                       "base case)." % TIMEOUT_SECONDS,
+                       "base case), or an approach that's too slow for big inputs "
+                       "(like recursion that recomputes the same answers)." % TIMEOUT_SECONDS,
         })
         return
     for line in proc.stdout.splitlines():

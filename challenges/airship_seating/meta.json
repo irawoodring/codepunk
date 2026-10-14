@@ -1,0 +1,12 @@
+{
+  "title": "Airship Seating",
+  "tier": "CS1",
+  "topic": "2D lists & nested loops",
+  "cogs": 1,
+  "reward": {"item": "Captain's Telescope", "description": "A collapsible spyglass. Through it, distant clouds look suspiciously like sheep.", "color": "#b89048"},
+  "hints": [
+    "seats[r][c] is the seat in row r, column c. Loop with for r in range(len(seats)): for c in range(len(seats[r])):",
+    "For book, check the row and column are in range BEFORE looking at seats[row][col], then change it to \"X\".",
+    "A free pair is two \".\" next to each other in the same row: check seats[r][c] and seats[r][c + 1] for c up to len(row) - 2."
+  ]
+}
