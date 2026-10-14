@@ -1,6 +1,6 @@
 # Codepunk: The Clockwork Codex
 
-A steampunk exploration game, built in **Godot 4**, that teaches **Python** to CS1 and CS2 students. It runs in the web browser, and student code runs in the browser too, with [Pyodide](https://pyodide.org). There's nothing for students to install.
+A steampunk exploration game, built in **Godot 4**, that let students practice **Python**. It runs in the web browser, as does student code, with [Pyodide](https://pyodide.org). There's nothing for students to install.
 
 Students explore the steam-powered city of Cogsworth. Every treasure chest and caged relic is sealed by a **puzzle-lock**: a programming problem with a set of tests. Make every test pass and the lock opens. You get the item, plus Brass Cogs that open gates to harder parts of the city.
 
